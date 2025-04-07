@@ -1,11 +1,11 @@
 <template>
   <div>
-<h1 class="bg-red-500">LogIn</h1>
+<TestHeader />
   </div>
 </template>
 
 <script setup>
-
+import TestHeader from '../components/TestHeader.vue'
 </script>
 
 <style scoped>
