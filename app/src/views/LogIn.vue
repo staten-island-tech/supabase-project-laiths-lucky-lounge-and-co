@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <div>
 <TestHeader />
   </div>
@@ -6,6 +7,15 @@
 
 <script setup>
 import TestHeader from '../components/TestHeader.vue'
+=======
+    <div>
+
+    </div>
+</template>
+
+<script setup>
+
+>>>>>>> main
 </script>
 
 <style scoped>
