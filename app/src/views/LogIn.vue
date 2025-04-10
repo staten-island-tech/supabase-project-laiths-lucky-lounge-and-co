@@ -5,7 +5,7 @@
       <input type="text" id="Username" placeholder="Username" />
       <input type="password" id="Password" placeholder="Password" />
       <div class="box">
-        <h1>Ni Hao</h1>
+        <p>Ni Hao</p>
       </div>
     </div>
     <TestHeader />
