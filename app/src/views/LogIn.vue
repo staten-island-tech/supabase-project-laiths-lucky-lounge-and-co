@@ -4,11 +4,20 @@
       <h1>Log into Laith's Lucky Lounge</h1>
       <input type="text" id="Username" placeholder="Username" />
       <input type="password" id="Password" placeholder="Password" />
+      <div class="box">
+        <h1>Ni Hao</h1>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+gsap.to('.box', { x: 200 })
+//import { useRouter } from 'vue-router'
+//import { useAuthStore } from '../stores/auth'
+import { gsap } from 'gsap'
+
+const router = useRouter()
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore()
   if (to.meta.requiresAuth && !auth.isLoggedIn) {
@@ -18,9 +27,6 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
