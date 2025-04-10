@@ -8,6 +8,19 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+router.beforeEach((to, from, next) => {
+  const auth = useAuthStore()
+  if (to.meta.requiresAuth && !auth.isLoggedIn) {
+    alert('You must log in to Laiths Lucky Lounge to Continue!')
+    next('/')
+  } else {
+    next()
+  }
+})
 
-<style scoped></style>
+</script>
+
+<style scoped>
+
+</style>
