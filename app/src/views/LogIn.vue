@@ -1,7 +1,7 @@
 <template>
   <div>
     <TestHeader />
-    <RouterLink to="/homepage">Game Room</RouterLink>
+    <RouterLink to="/homepage">Home</RouterLink>
   </div>
 </template>
 
