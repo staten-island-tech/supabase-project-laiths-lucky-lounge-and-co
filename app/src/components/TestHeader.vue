@@ -1,14 +1,10 @@
 <template>
-    <div>
-<h1 class="bg-red-500">test
-</h1>
-    </div>
+  <div>
+    <h1 class="bg-red-500">test</h1>
+    <p class="box">TEST2</p>
+  </div>
 </template>
 
-<script setup>
+<script setup></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>
