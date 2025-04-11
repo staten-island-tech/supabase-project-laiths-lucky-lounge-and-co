@@ -7,4 +7,5 @@
 
 <script setup></script>
 
+gsap.to(".box", {duration:2 x: 200})
 <style scoped></style>
