@@ -9,7 +9,7 @@
       </div>
     </div>
     <TestHeader />
-    <RouterLink to="/homepage">Home</RouterLink>
+    <RouterLink to="/homepage">Game Room</RouterLink>
   </div>
 </template>
 
