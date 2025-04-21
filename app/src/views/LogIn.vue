@@ -15,7 +15,6 @@
 
 <script setup>
 gsap.to('.box', { x: 200 })
-
 import { gsap } from 'gsap'
 
 const router = useRouter()

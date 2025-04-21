@@ -14,6 +14,31 @@ const router = createRouter({
       name: 'home',
       component: () => import('../views/HomePage.vue'),
     },
+    {
+      path: '/blackjack',
+      name: 'Blackjack',
+      component: () => import('../views/BlackjackPage.vue'),
+    },
+    {
+      path: '/coinflip',
+      name: 'CoinFlip',
+      component: () => import('../views/CoinFlip.vue'),
+    },
+    {
+      path: '/highlow',
+      name: 'HighLow',
+      component: () => import('../views/HighLow.vue'),
+    },
+    {
+      path: '/roulettePage',
+      name: 'RoulettePage',
+      component: () => import('../views/RoulettePage.vue'),
+    },
+    {
+      path: '/slotpage',
+      name: 'SlotPage',
+      component: () => import('../views/SlotPage.vue'),
+    },
   ],
 })
 
