@@ -15,8 +15,7 @@
 
 <script setup>
 gsap.to('.box', { x: 200 })
-//import { useRouter } from 'vue-router'
-//import { useAuthStore } from '../stores/auth'
+
 import { gsap } from 'gsap'
 
 const router = useRouter()
