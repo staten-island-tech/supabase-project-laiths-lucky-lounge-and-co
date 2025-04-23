@@ -30,11 +30,6 @@ const router = createRouter({
       component: () => import('../views/HighLow.vue'),
     },
     {
-      path: '/roulettePage',
-      name: 'RoulettePage',
-      component: () => import('../views/RoulettePage.vue'),
-    },
-    {
       path: '/slotpage',
       name: 'SlotPage',
       component: () => import('../views/SlotPage.vue'),
