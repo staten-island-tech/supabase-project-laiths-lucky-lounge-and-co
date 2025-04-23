@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="margin-bottom: 10px">
+    <div>
       <p>Money: ${{ money }}</p>
 
       <div v-if="!gameStarted">
@@ -14,12 +14,14 @@
         />
         <button @click="startGame" :disabled="bet <= 0 || bet > money">Place Bet</button>
       </div>
+
+      <p v-else>Current Bet: ${{ bet }}</p>
     </div>
 
     <CardHand name="Dealer" :hand="displayedDealerHand" />
     <CardHand name="Player" :hand="playerHand" />
 
-    <div style="margin-top: 20px">
+    <div>
       <button @click="hit" :disabled="gameOver || !gameStarted">Hit</button>
       <button @click="stand" :disabled="gameOver || !gameStarted">Stand</button>
       <button @click="doubleDown" :disabled="gameOver || !gameStarted || money < bet">
@@ -28,7 +30,7 @@
       <button @click="resetGame">Reset</button>
     </div>
 
-    <p v-if="result" style="font-size: 1.5em; margin-top: 10px">{{ result }}</p>
+    <p v-if="result">{{ result }}</p>
   </div>
 </template>
 
@@ -46,10 +48,8 @@ const gameStarted = ref(false)
 const result = ref('')
 const bet = ref(0)
 const money = ref(500)
-
 const showDealerHoleCard = ref(false)
 
-// Clamp the bet so it never exceeds current money
 function validateBet() {
   if (bet.value > money.value) bet.value = money.value
   if (bet.value < 1) bet.value = 1
@@ -91,7 +91,6 @@ function updateScores() {
   dealerScore.value = calculateScore(dealerHand.value)
 }
 
-// Show one dealer card and hide the other until reveal
 const displayedDealerHand = computed(() => {
   if (showDealerHoleCard.value || dealerHand.value.length < 2) return dealerHand.value
   return [
