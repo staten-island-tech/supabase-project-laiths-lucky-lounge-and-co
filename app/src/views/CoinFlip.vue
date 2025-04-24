@@ -1,8 +1,14 @@
 <template>
   <div
-    class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-6"
+    class="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-6"
   >
-    <div class="bg-white text-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-md">
+    <h1
+      class="absolute top-6 right-6 text-lg md:text-xl font-semibold bg-white text-indigo-700 px-4 py-2 rounded-xl shadow-md"
+    >
+      Your Balance: ${{ balance }}
+    </h1>
+
+    <div class="bg-white text-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-md mt-12">
       <h1 class="text-3xl font-bold mb-6 text-center">Coin Flip</h1>
       <input
         v-model="inputNumber"
@@ -12,15 +18,31 @@
       />
       <p v-if="inputNumber" class="mb-4 text-lg text-center">
         You're betting <span class="font-semibold text-indigo-700">${{ inputNumber }}</span>
+        <p1 class="font-semibold text-indigo-700"></p1>
       </p>
-      <button @click="choice = 'heads'">Heads</button>
-      <button @click="choice = 'tails'">Tails</button>
+
+      <div class="flex justify-between gap-4 mb-4">
+        <button
+          @click="pChoice = 'Heads'"
+          class="flex-1 bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 px-4 rounded-xl transition duration-200"
+        >
+          Heads
+        </button>
+        <button
+          @click="pChoice = 'Tails'"
+          class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition duration-200"
+        >
+          Tails
+        </button>
+      </div>
+
       <button
         @click="flipcoin"
         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition duration-200"
       >
         Flip Coin!
       </button>
+
       <p v-if="result" class="mt-4 text-lg text-center">
         The coin landed on <span class="font-semibold text-indigo-700">{{ result }}</span>
       </p>
@@ -30,21 +52,37 @@
 
 <script setup>
 import { ref } from 'vue'
+
+let pChoice = ''
 const inputNumber = ref(0)
-let choice = ref('')
-let result = ref('')
+const result = ref('')
+const balance = ref(100)
+
 function flipcoin() {
   const randomNumber = Math.random()
-  if (randomNumber > 0.5) {
-    result.value = 'heads'
+  result.value = randomNumber > 0.5 ? 'Heads' : 'Tails'
+  winLoss(pChoice)
+}
+
+function winLoss(choice) {
+  if (result.value === choice) {
+    updateBalance(inputNumber.value, true)
   } else {
-    result.value = 'tails'
+    updateBalance(inputNumber.value, false)
   }
 }
 
-function payOut() {
-  if (choice === result) {
-    return inputNumber.value * 2
+function updateBalance(amount, win) {
+  if (win) {
+    balance.value += amount
+    console.log('You earned $' + amount)
+  } else {
+    balance.value -= amount
+    console.log('You lost $' + amount)
   }
+}
+
+if (pChoice === '') {
+  console.log('Please choose a side!')
 }
 </script>
