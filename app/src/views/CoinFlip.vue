@@ -18,6 +18,7 @@
       />
       <p v-if="inputNumber" class="mb-4 text-lg text-center">
         You're betting <span class="font-semibold text-indigo-700">${{ inputNumber }}</span>
+        <p>You're guessing {{ pChoice }}</p>
         <p1 class="font-semibold text-indigo-700"></p1>
       </p>
 
@@ -53,7 +54,7 @@
 <script setup>
 import { ref } from 'vue'
 
-let pChoice = ''
+let pChoice = ref('')
 const inputNumber = ref(0)
 const result = ref('')
 const balance = ref(100)
