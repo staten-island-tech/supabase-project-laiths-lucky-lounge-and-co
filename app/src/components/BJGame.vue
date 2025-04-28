@@ -1,20 +1,41 @@
 <template>
   <div>
-    <CardHand name="Dealer" :hand="dealerHand" />
+    <div>
+      <p>Money: ${{ money }}</p>
+
+      <div v-if="!gameStarted">
+        <input
+          type="number"
+          v-model.number="bet"
+          placeholder="Enter your bet"
+          :max="money"
+          :min="1"
+          @input="validateBet"
+        />
+        <button @click="startGame" :disabled="bet <= 0 || bet > money">Place Bet</button>
+      </div>
+
+      <p v-else>Current Bet: ${{ bet }}</p>
+    </div>
+
+    <CardHand name="Dealer" :hand="displayedDealerHand" />
     <CardHand name="Player" :hand="playerHand" />
 
-    <div style="margin-top: 20px">
-      <button @click="hit" :disabled="gameOver">Hit</button>
-      <button @click="stand" :disabled="gameOver">Stand</button>
+    <div>
+      <button @click="hit" :disabled="gameOver || !gameStarted">Hit</button>
+      <button @click="stand" :disabled="gameOver || !gameStarted">Stand</button>
+      <button @click="doubleDown" :disabled="gameOver || !gameStarted || money < bet">
+        Double Down
+      </button>
       <button @click="resetGame">Reset</button>
     </div>
 
-    <p v-if="result" style="font-size: 1.5em; margin-top: 10px">{{ result }}</p>
+    <p v-if="result">{{ result }}</p>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import CardHand from './BJCardHand.vue'
 
 const deckId = ref('')
@@ -23,7 +44,16 @@ const dealerHand = ref([])
 const playerScore = ref(0)
 const dealerScore = ref(0)
 const gameOver = ref(false)
+const gameStarted = ref(false)
 const result = ref('')
+const bet = ref(0)
+const money = ref(500)
+const showDealerHoleCard = ref(false)
+
+function validateBet() {
+  if (bet.value > money.value) bet.value = money.value
+  if (bet.value < 1) bet.value = 1
+}
 
 async function fetchNewDeck() {
   const res = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
@@ -56,16 +86,44 @@ function calculateScore(hand) {
   return score
 }
 
+function updateScores() {
+  playerScore.value = calculateScore(playerHand.value)
+  dealerScore.value = calculateScore(dealerHand.value)
+}
+
+const displayedDealerHand = computed(() => {
+  if (showDealerHoleCard.value || dealerHand.value.length < 2) return dealerHand.value
+  return [
+    dealerHand.value[0],
+    {
+      code: 'BACK',
+      image:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Card_back_06.svg/200px-Card_back_06.svg.png',
+    },
+  ]
+})
+
 async function dealInitialCards() {
   const cards = await drawCards(4)
   playerHand.value = [cards[0], cards[2]]
   dealerHand.value = [cards[1], cards[3]]
   updateScores()
-}
 
-function updateScores() {
-  playerScore.value = calculateScore(playerHand.value)
-  dealerScore.value = calculateScore(dealerHand.value)
+  if (playerScore.value === 21 && dealerScore.value === 21) {
+    result.value = "Both got blackjack! It's a push."
+    money.value += bet.value
+    gameOver.value = true
+    showDealerHoleCard.value = true
+  } else if (dealerScore.value === 21) {
+    result.value = 'Dealer has blackjack. You lose.'
+    gameOver.value = true
+    showDealerHoleCard.value = true
+  } else if (playerScore.value === 21) {
+    result.value = 'Blackjack! You win 1.5x your bet!'
+    money.value += bet.value * 2.5
+    gameOver.value = true
+    showDealerHoleCard.value = true
+  }
 }
 
 async function hit() {
@@ -75,22 +133,52 @@ async function hit() {
   if (playerScore.value > 21) {
     result.value = 'You busted!'
     gameOver.value = true
+    showDealerHoleCard.value = true
   }
 }
 
 async function stand() {
+  showDealerHoleCard.value = true
+
   while (dealerScore.value < 17) {
     const [card] = await drawCards(1)
     dealerHand.value.push(card)
     updateScores()
   }
 
-  if (dealerScore.value > 21) result.value = 'Dealer busted! You win!'
-  else if (dealerScore.value > playerScore.value) result.value = 'Dealer wins!'
-  else if (dealerScore.value < playerScore.value) result.value = 'You win!'
-  else result.value = "It's a tie!"
+  if (dealerScore.value > 21) {
+    result.value = 'Dealer busted! You win!'
+    money.value += bet.value * 2
+  } else if (dealerScore.value > playerScore.value) {
+    result.value = 'Dealer wins!'
+  } else if (dealerScore.value < playerScore.value) {
+    result.value = 'You win!'
+    money.value += bet.value * 2
+  } else {
+    result.value = "It's a tie!"
+    money.value += bet.value
+  }
 
   gameOver.value = true
+}
+
+async function doubleDown() {
+  money.value -= bet.value
+  bet.value *= 2
+  await hit()
+  if (!gameOver.value) await stand()
+}
+
+async function startGame() {
+  if (bet.value <= 0 || bet.value > money.value) return
+  money.value -= bet.value
+  gameOver.value = false
+  result.value = ''
+  playerHand.value = []
+  dealerHand.value = []
+  showDealerHoleCard.value = false
+  await dealInitialCards()
+  gameStarted.value = true
 }
 
 async function resetGame() {
@@ -99,10 +187,12 @@ async function resetGame() {
   dealerHand.value = []
   result.value = ''
   gameOver.value = false
-  await dealInitialCards()
+  gameStarted.value = false
+  bet.value = 0
+  showDealerHoleCard.value = false
 }
 
 onMounted(() => {
-  resetGame()
+  fetchNewDeck()
 })
 </script>
