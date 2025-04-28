@@ -34,6 +34,11 @@ const router = createRouter({
       name: 'SlotPage',
       component: () => import('../views/SlotPage.vue'),
     },
+    {
+      path: '/cashcheck',
+      name: 'CashChecker',
+      component: () => import('../views/CashCheck.vue'),
+    },
   ],
 })
 

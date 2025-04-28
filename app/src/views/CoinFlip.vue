@@ -16,10 +16,16 @@
         type="number"
         class="w-full p-3 mb-4 border-2 border-indigo-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
-      <p v-if="inputNumber" class="mb-4 text-lg text-center">
-        You're betting <span class="font-semibold text-indigo-700">${{ inputNumber }}</span>
-        <p>You're guessing {{ pChoice }}</p>
-        <p1 class="font-semibold text-indigo-700"></p1>
+      <p>
+        You're betting
+        <span class="font-semibold text-indigo-700 bg-indigo-100 px-2 py-1 rounded-lg"
+          >${{ inputNumber }}</span
+        >
+      </p>
+      <p>
+        You're guessing<span class="font-semibold text-pink-600 bg-pink-100 px-2 py-1 rounded-lg">{{
+          pChoice
+        }}</span>
       </p>
 
       <div class="flex justify-between gap-4 mb-4">
@@ -57,12 +63,23 @@ import { ref } from 'vue'
 let pChoice = ref('')
 const inputNumber = ref(0)
 const result = ref('')
-const balance = ref(100)
+let balance = ref('')
+
+function moneyCheck(balance) {
+  if (inputNumber.value > balance.value) {
+    alert("You don't have enough money!")
+  } else if (balance.value <= 0) {
+    alert('You lost all your money!')
+  } else {
+    flipcoin()
+  }
+}
 
 function flipcoin() {
   const randomNumber = Math.random()
   result.value = randomNumber > 0.5 ? 'Heads' : 'Tails'
-  winLoss(pChoice)
+  moneyCheck(balance.value)
+  winLoss(pChoice.value)
 }
 
 function winLoss(choice) {
