@@ -10,25 +10,33 @@
 
     <div class="bg-white text-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-md mt-12">
       <h1 class="text-3xl font-bold mb-6 text-center">Coin Flip</h1>
+
       <input
         v-model="inputNumber"
         placeholder="Your betting amount!"
         type="number"
         class="w-full p-3 mb-4 border-2 border-indigo-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
-      <p>
-        You're betting
-        <span class="font-semibold text-indigo-700 bg-indigo-100 px-2 py-1 rounded-lg"
-          >${{ inputNumber }}</span
+
+      <p class="mt-2 text-sm text-gray-700">
+        You're betting:
+        <span
+          class="ml-2 inline-block bg-indigo-100 text-indigo-700 font-semibold px-3 py-1 rounded-md border border-indigo-300 shadow-sm"
         >
-      </p>
-      <p>
-        You're guessing<span class="font-semibold text-pink-600 bg-pink-100 px-2 py-1 rounded-lg">{{
-          pChoice
-        }}</span>
+          ${{ inputNumber }}
+        </span>
       </p>
 
-      <div class="flex justify-between gap-4 mb-4">
+      <p class="mt-2 text-sm text-gray-700">
+        You're guessing: 
+        <span
+          class="ml-2 inline-block bg-pink-100 text-pink-700 font-semibold px-3 py-1 rounded-md border border-pink-300 shadow-sm"
+        >
+          {{ pChoice }}
+        </span>
+      </p>
+
+      <div class="flex justify-between gap-4 mt-4 mb-4">
         <button
           @click="pChoice = 'Heads'"
           class="flex-1 bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 px-4 rounded-xl transition duration-200"
@@ -51,37 +59,29 @@
       </button>
 
       <p v-if="result" class="mt-4 text-lg text-center">
-        The coin landed on <span class="font-semibold text-indigo-700">{{ result }}</span>
+        The coin landed on
+        <span class="font-semibold text-indigo-700">{{ result }}</span>
       </p>
     </div>
   </div>
 </template>
 
+
 <script setup>
 import { ref } from 'vue'
 
-let pChoice = ref('')
+let pChoice = ref('Choose a Coin!')
 const inputNumber = ref(0)
 const result = ref('')
-let balance = ref('')
+let balance = ref(100)
 
-function moneyCheck(balance) {
-  if (inputNumber.value > balance.value) {
-    alert("You don't have enough money!")
-  } else if (balance.value <= 0) {
-    alert('You lost all your money!')
+function updateBalance(amount, win) {
+  if (win) {
+    balance.value += amount
   } else {
-    flipcoin()
+    balance.value -= amount
   }
 }
-
-function flipcoin() {
-  const randomNumber = Math.random()
-  result.value = randomNumber > 0.5 ? 'Heads' : 'Tails'
-  moneyCheck(balance.value)
-  winLoss(pChoice.value)
-}
-
 function winLoss(choice) {
   if (result.value === choice) {
     updateBalance(inputNumber.value, true)
@@ -89,18 +89,15 @@ function winLoss(choice) {
     updateBalance(inputNumber.value, false)
   }
 }
-
-function updateBalance(amount, win) {
-  if (win) {
-    balance.value += amount
-    console.log('You earned $' + amount)
-  } else {
-    balance.value -= amount
-    console.log('You lost $' + amount)
-  }
+function flipcoin() {
+  const randomNumber = Math.random()
+  result.value = randomNumber > 0.5 ? 'Heads' : 'Tails'
+  winLoss(pChoice.value)
 }
 
-if (pChoice === '') {
-  console.log('Please choose a side!')
-}
+if (pChoice === '') {}
+
+function moneyCheck() {
+  if (balance.value <= 0) {
+    alert('You are broke! Please refresh the page to play again.')}}
 </script>
