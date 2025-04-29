@@ -17,20 +17,28 @@
           :key="`${symbol}-${index}`"
           class="text-white text-5xl bg-gray-700 flex justify-center items-center h-32 w-32 rounded-lg"
         >
-          {{ symbol }}
+          <img :src="symbol" :alt="symbol" />
         </div>
       </div>
     </div>
-    <h2>{{ winMessage }}</h2>
+    <div class="flex justify-center mt-4">
+      <h2 class="text-2xl font-bold text-green-500">{{ winMessage }}</h2>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-
+import cherry from '../assets/cherryslots.png'
+import lemon from '../assets/lemonslots.png'
+import orange from '../assets/orangeslots.png'
+import plum from '../assets/plumslots.png'
+import bell from '../assets/bellslots.png'
+import bar from '../assets/barslots.png'
+import seven from '../assets/sevenslots.png'
 const money = ref(500)
 const symbols = ref(['', '', ''])
-const slotSymbols = ['Cherry', 'Lemon', 'Orange', 'Plum', 'Bell', 'Bar', 'Seven']
+const slotSymbols = [cherry, lemon, orange, plum, bell, bar, seven]
 const winMessage = ref('')
 function spin() {
   let nums = []
@@ -40,14 +48,14 @@ function spin() {
   symbols.value = nums.map((num) => slotSymbols[num])
   if (symbols.value[0] === symbols.value[1] && symbols.value[1] === symbols.value[2]) {
     money.value += 10
-    winMessage.value = 'Jackpot!'
+    winMessage.value = 'Jackpot! 10$!'
   } else if (
     symbols.value[0] === symbols.value[1] ||
     symbols.value[1] === symbols.value[2] ||
     symbols.value[0] === symbols.value[2]
   ) {
     money.value += 1.5
-    winMessage.value = 'You win!'
+    winMessage.value = 'You win $1.50!'
   } else {
     money.value -= 1
     winMessage.value = 'You lose!'

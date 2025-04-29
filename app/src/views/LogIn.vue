@@ -13,22 +13,6 @@
   </div>
 </template>
 
-<script setup>
-gsap.to('.box', { x: 200 })
-import { gsap } from 'gsap'
-
-const router = useRouter()
-router.beforeEach((to, from, next) => {
-  const auth = useAuthStore()
-  if (to.meta.requiresAuth && !auth.isLoggedIn) {
-    alert('You must log in to Laiths Lucky Lounge to Continue!')
-    next('/')
-  } else {
-    next()
-  }
-})
-import TestHeader from '@/components/TestHeader.vue'
-import { RouterLink } from 'vue-router'
-</script>
+<script setup></script>
 
 <style scoped></style>
