@@ -90,14 +90,17 @@ function winLoss(choice) {
   }
 }
 function flipcoin() {
+  moneyCheck(balance.value, inputNumber)
   const randomNumber = Math.random()
   result.value = randomNumber > 0.5 ? 'Heads' : 'Tails'
   winLoss(pChoice.value)
 }
 
-if (pChoice === '') {}
+function moneyCheck(balance, inputNumber) {
+  if (inputNumber.value > balance) {
+    alert('You don\'t have enough money to bet that much!')
+    inputNumber.value === pChoice22
+  }
+}
 
-function moneyCheck() {
-  if (balance.value <= 0) {
-    alert('You are broke! Please refresh the page to play again.')}}
 </script>
