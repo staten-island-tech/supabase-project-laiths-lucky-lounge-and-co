@@ -4,7 +4,7 @@
     <div class="text-white text-2xl font-bold mx-auto mt-4">Balance: ${{ money }}</div>
     <div class="mx-auto mt-8">
       <button
-        @click="spin"
+        @click="spinAnimate"
         class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
       >
         Spin
@@ -13,11 +13,22 @@
     <div class="mx-auto mt-8">
       <div class="grid grid-cols-3 gap-4">
         <div
-          v-for="(symbol, index) in symbols"
-          :key="`${symbol}-${index}`"
+          :key="`${symbols[0]}-${rando()}`"
           class="text-white text-5xl bg-gray-700 flex justify-center items-center h-32 w-32 rounded-lg"
         >
-          <img :src="symbol" :alt="symbol" />
+          <img :src="symbols[0]" :alt="symbols[0]" />
+        </div>
+        <div
+          :key="`${symbols[1]}-${rando()}`"
+          class="text-white text-5xl bg-gray-700 flex justify-center items-center h-32 w-32 rounded-lg"
+        >
+          <img :src="symbols[1]" :alt="symbols[1]" />
+        </div>
+        <div
+          :key="`${symbols[2]}-${rando()}`"
+          class="text-white text-5xl bg-gray-700 flex justify-center items-center h-32 w-32 rounded-lg"
+        >
+          <img :src="symbols[2]" :alt="symbols[2]" />
         </div>
       </div>
     </div>
@@ -29,6 +40,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import 'animate.css'
 import cherry from '../assets/cherryslots.png'
 import lemon from '../assets/lemonslots.png'
 import orange from '../assets/orangeslots.png'
@@ -36,10 +48,14 @@ import plum from '../assets/plumslots.png'
 import bell from '../assets/bellslots.png'
 import bar from '../assets/barslots.png'
 import seven from '../assets/sevenslots.png'
+const clicked = ref(false)
 const money = ref(500)
 const symbols = ref(['', '', ''])
 const slotSymbols = [cherry, lemon, orange, plum, bell, bar, seven]
 const winMessage = ref('')
+function rando() {
+  return Math.random()
+}
 function spin() {
   let nums = []
   for (let i = 0; i < 3; i++) {
@@ -60,6 +76,21 @@ function spin() {
     money.value -= 1
     winMessage.value = 'You lose!'
   }
+}
+async function spinAnimate() {
+  if (clicked.value) return
+  clicked.value = true
+  const start = Date.now()
+  for (let i = 0; i < 10; i++) {
+    symbols.value = [
+      slotSymbols[Math.floor(Math.random() * slotSymbols.length)],
+      slotSymbols[Math.floor(Math.random() * slotSymbols.length)],
+      slotSymbols[Math.floor(Math.random() * slotSymbols.length)],
+    ]
+    await new Promise((resolve) => setTimeout(resolve, 150))
+  }
+  spin()
+  clicked.value = false
 }
 </script>
 
