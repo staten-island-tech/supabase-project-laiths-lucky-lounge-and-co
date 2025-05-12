@@ -2,6 +2,17 @@
   <div class="h-screen bg-gray-900 flex flex-col justify-center">
     <div class="text-white text-6xl font-bold mx-auto">Slot Machine</div>
     <div class="text-white text-2xl font-bold mx-auto mt-4">Balance: ${{ money }}</div>
+    <div class="mx-auto mt-4">
+      <input
+        type="number"
+        v-model.number="betAmount"
+        placeholder="Bet"
+        class="text-white w-full p-2 border-2 border-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+        :max="money"
+        :min="1"
+      />
+    </div>
+
     <div class="mx-auto mt-8">
       <button
         @click="spinAnimate"
@@ -50,6 +61,7 @@ import bar from '../assets/barslots.png'
 import seven from '../assets/sevenslots.png'
 const clicked = ref(false)
 const money = ref(500)
+const betAmount = ref(1)
 const symbols = ref(['', '', ''])
 const slotSymbols = [cherry, lemon, orange, plum, bell, bar, seven]
 const winMessage = ref('')
@@ -57,23 +69,27 @@ function rando() {
   return Math.random()
 }
 function spin() {
+  if (betAmount.value > money.value || betAmount.value <= 0) {
+    winMessage.value = 'Invalid bet! (what a bum u though u could cheat)'
+    return
+  }
   let nums = []
   for (let i = 0; i < 3; i++) {
     nums.push(Math.floor(Math.random() * slotSymbols.length))
   }
   symbols.value = nums.map((num) => slotSymbols[num])
   if (symbols.value[0] === symbols.value[1] && symbols.value[1] === symbols.value[2]) {
-    money.value += 10
-    winMessage.value = 'Jackpot! 10$!'
+    money.value += betAmount.value * 10
+    winMessage.value = `Jackpot! $${betAmount.value * 10}!`
   } else if (
     symbols.value[0] === symbols.value[1] ||
     symbols.value[1] === symbols.value[2] ||
     symbols.value[0] === symbols.value[2]
   ) {
-    money.value += 1.5
-    winMessage.value = 'You win $1.50!'
+    money.value += betAmount.value * 1.5
+    winMessage.value = `You win $${betAmount.value * 1.5}!`
   } else {
-    money.value -= 1
+    money.value -= betAmount.value
     winMessage.value = 'You lose!'
   }
 }

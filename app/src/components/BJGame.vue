@@ -12,7 +12,7 @@
           :min="1"
           @input="validateBet"
         />
-        <button @click="startGame" :disabled="bet <= 0 || bet > money">Place Bet</button>
+        <button @click="startGame">Place Bet</button>
       </div>
 
       <p v-else>Current Bet: ${{ bet }}</p>
