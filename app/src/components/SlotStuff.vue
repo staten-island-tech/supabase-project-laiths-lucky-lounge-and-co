@@ -74,6 +74,7 @@ function spin() {
     return
   }
   let nums = []
+  money.value -= betAmount.value
   for (let i = 0; i < 3; i++) {
     nums.push(Math.floor(Math.random() * slotSymbols.length))
   }
@@ -89,7 +90,6 @@ function spin() {
     money.value += betAmount.value * 1.5
     winMessage.value = `You win $${betAmount.value * 1.5}!`
   } else {
-    money.value -= betAmount.value
     winMessage.value = 'You lose!'
   }
 }
