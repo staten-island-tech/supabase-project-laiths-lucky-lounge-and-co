@@ -1,9 +1,10 @@
 <template>
-  <div>
-    <div>
-      <p>Money: ${{ money }}</p>
+  <div class="bg-green-900 min-h-screen py-10 px-4 text-white font-sans flex flex-col items-center space-y-10">
+    
+    <div class="text-center">
+      <p class="text-3xl font-bold mb-2">💰 Money: ${{ money }}</p>
 
-      <div v-if="!gameStarted">
+      <div v-if="!gameStarted" class="flex flex-col sm:flex-row items-center gap-4 mt-4">
         <input
           type="number"
           v-model.number="bet"
@@ -11,28 +12,61 @@
           :max="money"
           :min="1"
           @input="validateBet"
+          class="px-4 py-2 rounded-md text-black w-40 text-lg"
         />
-        <button @click="startGame">Place Bet</button>
+        <button
+          @click="startGame"
+          class="px-5 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-md font-semibold text-lg"
+        >
+          Place Bet
+        </button>
       </div>
 
-      <p v-else>Current Bet: ${{ bet }}</p>
+      <p v-else class="text-xl mt-4 font-medium">Current Bet: ${{ bet }}</p>
     </div>
 
-    <CardHand name="Dealer" :hand="displayedDealerHand" />
-    <CardHand name="Player" :hand="playerHand" />
+    <div class="w-full max-w-4xl space-y-10">
+      <CardHand name="Dealer" :hand="displayedDealerHand" />
+      <CardHand name="Player" :hand="playerHand" />
+    </div>
 
-    <div>
-      <button @click="hit" :disabled="gameOver || !gameStarted">Hit</button>
-      <button @click="stand" :disabled="gameOver || !gameStarted">Stand</button>
-      <button @click="doubleDown" :disabled="gameOver || !gameStarted || money < bet">
+    <div class="flex flex-wrap justify-center gap-4 mt-4">
+      <button
+        @click="hit"
+        :disabled="gameOver || !gameStarted"
+        class="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-semibold text-lg disabled:bg-gray-600"
+      >
+        Hit
+      </button>
+      <button
+        @click="stand"
+        :disabled="gameOver || !gameStarted"
+        class="px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold text-lg disabled:bg-gray-600"
+      >
+        Stand
+      </button>
+      <button
+        @click="doubleDown"
+        :disabled="gameOver || !gameStarted || money < bet"
+        class="px-6 py-3 bg-red-500 hover:bg-red-600 rounded-lg font-semibold text-lg disabled:bg-gray-600"
+      >
         Double Down
       </button>
-      <button @click="resetGame">Reset</button>
+      <button
+        @click="resetGame"
+        class="px-6 py-3 bg-gray-700 hover:bg-gray-800 rounded-lg font-semibold text-lg"
+      >
+        Reset
+      </button>
     </div>
 
-    <p v-if="result">{{ result }}</p>
+    <p v-if="result" class="text-2xl font-bold text-yellow-400 mt-6 drop-shadow text-center">
+      {{ result }}
+    </p>
   </div>
 </template>
+
+
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'

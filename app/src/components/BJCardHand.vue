@@ -1,8 +1,14 @@
 <template>
-  <div>
-    <h2>{{ name }}</h2>
-    <div style="display: flex; gap: 8px; flex-wrap: wrap">
-      <img v-for="card in hand" :key="card.code" :src="card.image" alt="card" style="width: 80px" />
+  <div class="text-center">
+    <h2 class="text-2xl font-bold mb-4">{{ name }}</h2>
+    <div class="flex flex-wrap justify-center gap-4">
+      <img
+        v-for="card in hand"
+        :key="card.code"
+        :src="card.image"
+        alt="card"
+        class="w-24 drop-shadow-md"
+      />
     </div>
   </div>
 </template>
