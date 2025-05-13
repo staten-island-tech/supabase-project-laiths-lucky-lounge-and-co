@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Blackjack</h1>
     <BlackJack />
   </div>
 </template>
