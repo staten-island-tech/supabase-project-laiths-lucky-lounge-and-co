@@ -70,7 +70,7 @@ function rando() {
 }
 function spin() {
   if (betAmount.value > money.value || betAmount.value <= 0) {
-    winMessage.value = 'Invalid bet! (what a bum u though u could cheat)'
+    winMessage.value = 'Invalid bet! (what a bum u thought u could cheat)'
     return
   }
   let nums = []
