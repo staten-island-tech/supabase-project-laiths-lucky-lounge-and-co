@@ -1,16 +1,7 @@
 <template>
-    <div>
-        <input type="text" placeholder="Enter a number 1-100" />
-        <button>Play</button>
-        @click 
-
-    </div>
+  <div></div>
 </template>
 
-<script setup>
+<script setup></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>
