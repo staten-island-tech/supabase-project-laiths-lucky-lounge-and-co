@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>gvbgujbhukkbnbkn</h1>
     <div v-if="!gameStarted">
       <input
         type="number"

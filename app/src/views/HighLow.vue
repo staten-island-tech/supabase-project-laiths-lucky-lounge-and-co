@@ -1,7 +1,11 @@
 <template>
-  <div></div>
+  <div>
+    <HighLowStuff />
+  </div>
 </template>
 
-<script setup></script>
+<script setup>
+import HighLowStuff from '@/components/HighLowStuff.vue'
+</script>
 
 <style scoped></style>
