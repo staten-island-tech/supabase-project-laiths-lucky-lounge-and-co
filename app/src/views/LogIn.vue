@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-900 flex items-center justify-center">
     <div
-      class="bg-gray-800/50 backdrop-blur-md border border-gray-600 rounded-xl p-8 w-full max-w-md shadow-lg outline outline-4 outline-yellow-400"
+      class="bg-gray-800/50 backdrop-blur-md border border-gray-600 rounded-xl p-8 w-full max-w-md shadow-lg outline-4 outline-yellow-400"
     >
       <h1 class="text-3xl font-bold text-center text-yellow-400 mb-6">
         Log into <span class="text-yellow-400">Laith's Lucky Lounge</span>
@@ -30,7 +30,6 @@
     </div>
   </div>
 </template>
-
 
 <script setup></script>
 

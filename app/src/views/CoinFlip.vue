@@ -28,7 +28,7 @@
       </p>
 
       <p class="mt-2 text-sm text-gray-700">
-        You're guessing: 
+        You're guessing:
         <span
           class="ml-2 inline-block bg-pink-100 text-pink-700 font-semibold px-3 py-1 rounded-md border border-pink-300 shadow-sm"
         >
@@ -63,9 +63,15 @@
         <span class="font-semibold text-indigo-700">{{ result }}</span>
       </p>
     </div>
+    <RouterLink to="/homepage">
+      <button
+        class="absolute top-3 left-3 p-2 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-md outline-2 outline-offset-2"
+      >
+        &lt;
+      </button>
+    </RouterLink>
   </div>
 </template>
-
 
 <script setup>
 import { ref } from 'vue'
@@ -98,9 +104,8 @@ function flipcoin() {
 
 function moneyCheck(balance, inputNumber) {
   if (inputNumber.value > balance) {
-    alert('You don\'t have enough money to bet that much!')
+    alert("You don't have enough money to bet that much!")
     inputNumber.value === pChoice22
   }
 }
-
 </script>
