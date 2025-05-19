@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <div v-if="!gameStarted">
+  <div
+    class="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6 space-y-6"
+  >
+    <div v-if="!gameStarted" class="space-y-4">
       <input
         type="number"
         v-model.number="bet"
@@ -8,13 +10,38 @@
         :max="money"
         :min="1"
         @input="validateBet"
+        class="w-full px-4 py-2 text-black rounded-md bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
       />
-      <button @click="startGame">Place Bet</button>
+      <button
+        @click="startGame"
+        class="px-6 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-md font-semibold"
+      >
+        Place Bet
+      </button>
     </div>
-    <img :src="oldCard.image" :alt="`${oldCard.value} of ${oldCard.suit}`" v-if="oldCard" />
-    <button v-if="gameStarted" @click="choice = 'higher'">Higher</button>
-    <button v-if="gameStarted" @click="choice = 'lower'">Lower</button>
-    <p v-if="result">{{ result }}</p>
+    <img
+      :src="oldCard.image"
+      :alt="`${oldCard.value} of ${oldCard.suit}`"
+      v-if="oldCard"
+      class="w-32 h-32"
+    />
+    <div v-if="gameStarted" class="space-x-4">
+      <button
+        @click="[(choice = 'higher'), checkResult()]"
+        class="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-md font-semibold"
+      >
+        Higher
+      </button>
+      <button
+        @click="[(choice = 'lower'), checkResult()]"
+        class="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-md font-semibold"
+      >
+        Lower
+      </button>
+    </div>
+    <p class="text-lg font-bold">Money: ${{ money }}</p>
+    <p class="text-lg font-bold">Winnings: ${{ currentWinnings }}</p>
+    <p v-if="result" class="text-xl font-bold text-yellow-400">{{ result }}</p>
   </div>
 </template>
 
@@ -22,7 +49,6 @@
 import { ref } from 'vue'
 
 const deckId = ref('')
-const gameOver = ref(true)
 const gameStarted = ref(false)
 const result = ref('')
 const turnResult = ''
@@ -54,13 +80,13 @@ function validateBet() {
 }
 
 async function startGame() {
-  gameOver.value = false
   gameStarted.value = true
   result.value = ''
   await fetchNewDeck()
   oldCard.value = ''
   const cards = await drawCards(1)
   newCard.value = cards[0]
+  faceCards()
   newTurn()
 }
 
@@ -68,26 +94,66 @@ async function newTurn() {
   oldCard.value = newCard.value
   cards = await drawCards(1)
   newCard.value = cards[0]
+  faceCards()
 }
 
 function checkResult() {
   if (newCard.value.value > oldCard.value.value) {
     turnResult.value = 'Higher'
+    console.log(turnResult.value)
   } else if (newCard.value.value < oldCard.value.value) {
     turnResult.value = 'Lower'
+    console.log(turnResult.value)
   }
+  console.log(`choice ${choice.value}`)
   let mult = findMult()
   if (turnResult.value === choice.value) {
     result.value = 'You win!'
-    currentWinnings.value = currentWinnings.value * 2
+    currentWinnings.value *= mult
+    newTurn()
+  } else if (mult == 1) {
+    result.value = 'Tie!'
+    newTurn()
   } else {
     result.value = 'You lose!'
     money.value -= bet.value
+    gameStarted.value = false
+  }
+}
+
+function faceCards() {
+  if (newCard.value.value === 'JACK') {
+    newCard.value.value = 11
+  } else if (newCard.value.value === 'QUEEN') {
+    newCard.value.value = 12
+  } else if (newCard.value.value === 'KING') {
+    newCard.value.value = 13
+  } else if (newCard.value.value === 'ACE') {
+    newCard.value.value = 1
   }
 }
 
 function findMult() {
+  let counter = 0
+  let mult = 1
   if (newCard.value.value > oldCard.value.value) {
+    while (newCard.value.value > oldCard.value.value) {
+      oldCard.value.value += 1
+      counter += 1
+    }
+  } else if (newCard.value.value < oldCard.value.value) {
+    while (newCard.value.value < oldCard.value.value) {
+      oldCard.value.value += 1
+      counter += 1
+    }
+  }
+  if (counter == 0) {
+    return mult
+  } else {
+    for (let i = 0; i < counter; i++) {
+      mult *= 1.05
+    }
+    return mult
   }
 }
 </script>
