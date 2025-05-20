@@ -51,14 +51,14 @@ import { ref } from 'vue'
 const deckId = ref('')
 const gameStarted = ref(false)
 const result = ref('')
-const turnResult = ''
-const choice = ''
+let turnResult = ''
+let choice = ''
 const bet = ref(0)
 const currentWinnings = ref(0)
 const money = ref(500)
 const newCard = ref(null)
 const oldCard = ref(null)
-const cards = []
+const cards = ref([])
 
 async function fetchNewDeck() {
   const res = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
@@ -84,30 +84,30 @@ async function startGame() {
   result.value = ''
   await fetchNewDeck()
   oldCard.value = ''
-  const cards = await drawCards(1)
-  newCard.value = cards[0]
+  cards.value = await drawCards(1)
+  newCard.value = cards.value[0]
   faceCards()
   newTurn()
 }
 
 async function newTurn() {
   oldCard.value = newCard.value
-  cards = await drawCards(1)
-  newCard.value = cards[0]
+  cards.value = await drawCards(1)
+  newCard.value = cards.value[0]
   faceCards()
 }
 
 function checkResult() {
   if (newCard.value.value > oldCard.value.value) {
-    turnResult.value = 'Higher'
-    console.log(turnResult.value)
+    turnResult = 'Higher'
+    console.log(turnResult)
   } else if (newCard.value.value < oldCard.value.value) {
-    turnResult.value = 'Lower'
-    console.log(turnResult.value)
+    turnResult = 'Lower'
+    console.log(turnResult)
   }
-  console.log(`choice ${choice.value}`)
+  console.log(`choice ${choice}`)
   let mult = findMult()
-  if (turnResult.value === choice.value) {
+  if (turnResult === choice) {
     result.value = 'You win!'
     currentWinnings.value *= mult
     newTurn()
