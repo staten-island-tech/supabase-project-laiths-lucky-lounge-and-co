@@ -51,9 +51,9 @@ import { ref } from 'vue'
 const deckId = ref('')
 const gameStarted = ref(false)
 const result = ref('')
-let turnResult = ''
-let choice = ''
-const bet = ref(0)
+const turnResult = ref('')
+const choice = ref('')
+const bet = ref(1)
 const currentWinnings = ref(0)
 const money = ref(500)
 const newCard = ref(null)
@@ -86,7 +86,7 @@ async function startGame() {
   oldCard.value = ''
   cards.value = await drawCards(1)
   newCard.value = cards.value[0]
-  faceCards()
+  faceCards(newCard.value)
   newTurn()
 }
 
@@ -94,20 +94,20 @@ async function newTurn() {
   oldCard.value = newCard.value
   cards.value = await drawCards(1)
   newCard.value = cards.value[0]
-  faceCards()
+  faceCards(newCard.value)
 }
 
 function checkResult() {
   if (newCard.value.value > oldCard.value.value) {
-    turnResult = 'Higher'
-    console.log(turnResult)
+    turnResult.value = 'Higher'
+    console.log(turnResult.value)
   } else if (newCard.value.value < oldCard.value.value) {
-    turnResult = 'Lower'
-    console.log(turnResult)
+    turnResult.value = 'Lower'
+    console.log(turnResult.value)
   }
-  console.log(`choice ${choice}`)
+  console.log(`choice ${choice.value}`)
   let mult = findMult()
-  if (turnResult === choice) {
+  if (turnResult.value === choice.value) {
     result.value = 'You win!'
     currentWinnings.value *= mult
     newTurn()
@@ -121,40 +121,31 @@ function checkResult() {
   }
 }
 
-function faceCards() {
-  if (newCard.value.value === 'JACK') {
-    newCard.value.value = 11
-  } else if (newCard.value.value === 'QUEEN') {
-    newCard.value.value = 12
-  } else if (newCard.value.value === 'KING') {
-    newCard.value.value = 13
-  } else if (newCard.value.value === 'ACE') {
-    newCard.value.value = 1
+function faceCards(card) {
+  if (card.value.value === 'JACK') {
+    card.value.value = 11
+  } else if (card.value.value === 'QUEEN') {
+    card.value.value = 12
+  } else if (card.value.value === 'KING') {
+    card.value.value = 13
+  } else if (card.value.value === 'ACE') {
+    card.value.value = 1
   }
 }
 
 function findMult() {
-  let counter = 0
   let mult = 1
-  if (newCard.value.value > oldCard.value.value) {
-    while (newCard.value.value > oldCard.value.value) {
-      oldCard.value.value += 1
-      counter += 1
-    }
-  } else if (newCard.value.value < oldCard.value.value) {
-    while (newCard.value.value < oldCard.value.value) {
-      oldCard.value.value += 1
-      counter += 1
-    }
+  let oldVal = oldCard.value.value
+  let newVal = newCard.value.value
+  let diff = Math.abs(newVal - oldVal)
+
+  if (diff === 0) return 1
+
+  for (let i = 0; i < diff; i++) {
+    mult *= 1.05
   }
-  if (counter == 0) {
-    return mult
-  } else {
-    for (let i = 0; i < counter; i++) {
-      mult *= 1.05
-    }
-    return mult
-  }
+
+  return mult
 }
 </script>
 
