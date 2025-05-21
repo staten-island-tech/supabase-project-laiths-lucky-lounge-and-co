@@ -27,16 +27,22 @@
     />
     <div v-if="gameStarted" class="space-x-4">
       <button
-        @click="[(choice = 'higher'), checkResult()]"
+        @click="[(choice = 'Higher'), checkResult()]"
         class="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-md font-semibold"
       >
         Higher
       </button>
       <button
-        @click="[(choice = 'lower'), checkResult()]"
+        @click="[(choice = 'Lower'), checkResult()]"
         class="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-md font-semibold"
       >
         Lower
+      </button>
+      <button
+        @click="[(gameStarted = false), cashOut()]"
+        class="px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-md font-semibold"
+      >
+        Cash Out
       </button>
     </div>
     <p class="text-lg font-bold">Money: ${{ money }}</p>
@@ -83,10 +89,12 @@ async function startGame() {
   gameStarted.value = true
   result.value = ''
   await fetchNewDeck()
+  money.value -= bet.value
+  currentWinnings.value = bet.value
   oldCard.value = ''
   cards.value = await drawCards(1)
   newCard.value = cards.value[0]
-  faceCards(newCard.value)
+  faceCards(newCard)
   newTurn()
 }
 
@@ -94,29 +102,27 @@ async function newTurn() {
   oldCard.value = newCard.value
   cards.value = await drawCards(1)
   newCard.value = cards.value[0]
-  faceCards(newCard.value)
+  faceCards(newCard)
 }
 
 function checkResult() {
   if (newCard.value.value > oldCard.value.value) {
     turnResult.value = 'Higher'
-    console.log(turnResult.value)
   } else if (newCard.value.value < oldCard.value.value) {
     turnResult.value = 'Lower'
-    console.log(turnResult.value)
   }
-  console.log(`choice ${choice.value}`)
   let mult = findMult()
   if (turnResult.value === choice.value) {
     result.value = 'You win!'
-    currentWinnings.value *= mult
+    currentWinnings.value = Math.round(currentWinnings.value * mult * 100) / 100
     newTurn()
-  } else if (mult == 1) {
+  } else if (mult === 1) {
     result.value = 'Tie!'
     newTurn()
   } else {
     result.value = 'You lose!'
     money.value -= bet.value
+    oldCard.value = newCard.value
     gameStarted.value = false
   }
 }
@@ -137,15 +143,32 @@ function findMult() {
   let mult = 1
   let oldVal = oldCard.value.value
   let newVal = newCard.value.value
-  let diff = Math.abs(newVal - oldVal)
-
-  if (diff === 0) return 1
+  let diff = 0
+  if (newVal == oldVal) {
+    return 1
+  }
+  if (oldVal <= 7 && newVal > oldVal) {
+    let diff = Math.abs(7 - oldVal) // small mult
+  } else if (oldVal >= 8 && newVal < oldVal) {
+    let diff = Math.abs(13 - oldVal) // small mult
+  } else if (oldVal >= 8 && newVal > oldVal) {
+    let diff = oldVal - 1
+  } else if (oldVal <= 7 && newVal < oldVal) {
+    let diff = 13 - oldVal
+  }
 
   for (let i = 0; i < diff; i++) {
     mult *= 1.05
   }
-
   return mult
+}
+
+function cashOut() {
+  money.value += currentWinnings.value
+  money.value = Math.round(money.value * 100) / 100
+  currentWinnings.value = 0
+  gameStarted.value = false
+  oldCard.value = ''
 }
 </script>
 
