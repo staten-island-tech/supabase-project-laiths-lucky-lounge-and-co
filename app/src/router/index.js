@@ -34,6 +34,11 @@ const router = createRouter({
       name: 'SlotPage',
       component: () => import('../views/SlotPage.vue'),
     },
+    {
+      path: '/moneyinput',
+      name: 'MoneyInput',
+      component: () => import('../views/MoneyLaunder.vue'),
+    }
   ],
 })
 
