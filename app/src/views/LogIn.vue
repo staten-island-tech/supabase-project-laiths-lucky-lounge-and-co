@@ -4,7 +4,7 @@
       to="/signup"
       class="mt-4 bg-yellow-500 hover:bg-yellow-600 text-center text-white font-semibold py-2 rounded-md transition"
     >
-      Enter Game Room
+      Sign Up
     </RouterLink>
     <RouterLink
       to="/homepage"
