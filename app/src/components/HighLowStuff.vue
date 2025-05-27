@@ -58,7 +58,7 @@ const currentWinnings = ref(0)
 const money = ref(500)
 const newCard = ref(null)
 const oldCard = ref(null)
-const cards = []
+let cards = []
 
 async function fetchNewDeck() {
   const res = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
