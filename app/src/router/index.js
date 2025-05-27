@@ -39,6 +39,11 @@ const router = createRouter({
       name: 'signUp',
       component: () => import('../views/SignUp.vue'),
     },
+    {
+      path: '/moneyinput',
+      name: 'MoneyInput',
+      component: () => import('../views/MoneyLaunder.vue'),
+    },
   ],
 })
 
