@@ -34,6 +34,11 @@ const router = createRouter({
       name: 'SlotPage',
       component: () => import('../views/SlotPage.vue'),
     },
+    {
+      path: '/signup',
+      name: 'signUp',
+      component: () => import('../views/SignUp.vue'),
+    },
   ],
 })
 
