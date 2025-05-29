@@ -105,7 +105,7 @@ function flipcoin() {
 function moneyCheck(balance, inputNumber) {
   if (inputNumber.value > balance) {
     alert("You don't have enough money to bet that much!")
-    inputNumber.value === pChoice22
+    inputNumber.value === pChoice
   }
 }
 </script>
