@@ -45,9 +45,9 @@ const router = createRouter({
       component: () => import('../views/MoneyLaunder.vue'),
     },
     {
-      path: 'confirmemail',
+      path: '/confirmemail',
       name: 'ConfirmEmail',
-      component: () => import('../views/ConfirmEmail.vue'),
+      component: () => import('../views/EmailPage.vue'),
     },
   ],
 })
