@@ -63,6 +63,6 @@ const handleSignUp = async () => {
     error.value = signUpError.message
     return
   }
-  router.push('/checkemail')
+  router.push('/confirmemail')
 }
 </script>
