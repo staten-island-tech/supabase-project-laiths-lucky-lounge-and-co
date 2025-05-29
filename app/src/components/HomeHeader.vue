@@ -7,9 +7,9 @@
       </button>
       <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 mr-3">
         <li><RouterLink to="/blackjack">Blackjack</RouterLink></li>
+        <li><RouterLink to="/coinflip">Coin Flip</RouterLink></li>
         <li><RouterLink to="/highlow">High/Low</RouterLink></li>
         <li><RouterLink to="/slotpage">Slot Machine</RouterLink></li>
-        <li><RouterLink to="/coinflip">Coin Flip</RouterLink></li>
       </ul>
     </div>
   </div>
