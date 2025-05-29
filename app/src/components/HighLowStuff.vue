@@ -23,7 +23,7 @@
       :src="oldCard.image"
       :alt="`${oldCard.value} of ${oldCard.suit}`"
       v-if="oldCard"
-      class="w-32 h-32"
+      class="w-32 h-auto"
     />
     <div v-if="gameStarted" class="space-x-4">
       <button
@@ -51,8 +51,8 @@ import { ref } from 'vue'
 const deckId = ref('')
 const gameStarted = ref(false)
 const result = ref('')
-const turnResult = ''
-const choice = ''
+const turnResult = ref('')
+const choice = ref('')
 const bet = ref(0)
 const currentWinnings = ref(0)
 const money = ref(500)
@@ -98,6 +98,7 @@ async function newTurn() {
 }
 
 function checkResult() {
+  console.log(`old card ${oldCard.value.value} new card ${newCard.value.value}`)
   if (newCard.value.value > oldCard.value.value) {
     turnResult.value = 'Higher'
     console.log(turnResult.value)
@@ -135,13 +136,15 @@ function faceCards() {
 
 function findMult() {
   let counter = 0
-  let mult = 1
+  let mult = 0
   if (newCard.value.value > oldCard.value.value) {
+    mult = 1
     while (newCard.value.value > oldCard.value.value) {
       oldCard.value.value += 1
       counter += 1
     }
   } else if (newCard.value.value < oldCard.value.value) {
+    mult = 1
     while (newCard.value.value < oldCard.value.value) {
       oldCard.value.value += 1
       counter += 1
