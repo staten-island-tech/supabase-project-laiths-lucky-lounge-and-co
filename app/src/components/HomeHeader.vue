@@ -13,7 +13,7 @@
       </ul>
     </div>
   </div>
-</template>s
+</template>
 
 <script setup>
 import { Gamepad2 } from 'lucide-vue-next'
