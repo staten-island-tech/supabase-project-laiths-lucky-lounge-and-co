@@ -58,11 +58,21 @@
         Flip Coin!
       </button>
 
+      <div v-if="result" class="mt-4 flex justify-center">
+        <img
+          :key="flipKey"
+          :src="result === 'Heads' ? '/heads.png' : '/tails.png'"
+          alt="Coin Result"
+          class="w-24 h-24 flip-coin"
+        />
+      </div>
+
       <p v-if="result" class="mt-4 text-lg text-center">
         The coin landed on
         <span class="font-semibold text-indigo-700">{{ result }}</span>
       </p>
     </div>
+
     <RouterLink to="/homepage">
       <button
         class="absolute top-3 left-3 p-2 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-md outline-2 outline-offset-2"
@@ -80,6 +90,7 @@ let pChoice = ref('Choose a Coin!')
 const inputNumber = ref(0)
 const result = ref('')
 let balance = ref(100)
+const flipKey = ref(0) 
 
 function updateBalance(amount, win) {
   if (win) {
@@ -88,6 +99,7 @@ function updateBalance(amount, win) {
     balance.value -= amount
   }
 }
+
 function winLoss(choice) {
   if (result.value === choice) {
     updateBalance(inputNumber.value, true)
@@ -95,17 +107,33 @@ function winLoss(choice) {
     updateBalance(inputNumber.value, false)
   }
 }
+
 function flipcoin() {
-  moneyCheck(balance.value, inputNumber)
+  if (inputNumber.value > balance.value || inputNumber.value <= 0) {
+    alert("You don't have enough money to bet that much!")
+    return
+  }
   const randomNumber = Math.random()
   result.value = randomNumber > 0.5 ? 'Heads' : 'Tails'
   winLoss(pChoice.value)
-}
-
-function moneyCheck(balance, inputNumber) {
-  if (inputNumber.value > balance) {
-    alert("You don't have enough money to bet that much!")
-    inputNumber.value === pChoice22
-  }
+  flipKey.value++ 
 }
 </script>
+
+<style scoped>
+@keyframes flip {
+  0% {
+    transform: rotateY(0);
+  }
+  50% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+.flip-coin {
+  animation: flip 0.6s ease-in-out;
+}
+</style>
