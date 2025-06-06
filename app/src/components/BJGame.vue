@@ -91,7 +91,7 @@ function validateBet() {
   if (bet.value > money.value) bet.value = money.value
   if (bet.value < 1) bet.value = 1
 }
-
+ 
 async function fetchNewDeck() {
   const res = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
   const data = await res.json()
