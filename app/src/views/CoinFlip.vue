@@ -61,7 +61,7 @@
       <div v-if="result" class="mt-4 flex justify-center">
         <img
           :key="flipKey"
-          :src="result === 'Heads' ? '/heads.png' : '/tails.png'"
+          :src="`../assets/${result.value}.png`"
           alt="Coin Result"
           class="w-24 h-24 flip-coin"
         />
@@ -90,7 +90,7 @@ let pChoice = ref('Choose a Coin!')
 const inputNumber = ref(0)
 const result = ref('')
 let balance = ref(100)
-const flipKey = ref(0) 
+const flipKey = ref(0)
 
 function updateBalance(amount, win) {
   if (win) {
@@ -116,7 +116,7 @@ function flipcoin() {
   const randomNumber = Math.random()
   result.value = randomNumber > 0.5 ? 'Heads' : 'Tails'
   winLoss(pChoice.value)
-  flipKey.value++ 
+  flipKey.value++
 }
 </script>
 
