@@ -86,7 +86,7 @@ async function startGame() {
   oldCard.value = ''
   const cards = await drawCards(1)
   newCard.value = cards[0]
-  faceCards()
+
   newTurn()
 }
 
@@ -94,7 +94,6 @@ async function newTurn() {
   oldCard.value = newCard.value
   cards = await drawCards(1)
   newCard.value = cards[0]
-  faceCards()
 }
 
 function checkResult() {
@@ -122,31 +121,36 @@ function checkResult() {
   }
 }
 
-function faceCards() {
-  if (newCard.value.value === 'JACK') {
-    newCard.value.value = 11
-  } else if (newCard.value.value === 'QUEEN') {
-    newCard.value.value = 12
-  } else if (newCard.value.value === 'KING') {
-    newCard.value.value = 13
-  } else if (newCard.value.value === 'ACE') {
-    newCard.value.value = 1
+function numValue(card) {
+  switch (card.value) {
+    case 'ACE':
+      return 1
+    case 'JACK':
+      return 11
+    case 'QUEEN':
+      return 12
+    case 'KING':
+      return 13
+    default:
+      return Number(card.value)
   }
 }
 
 function findMult() {
   let counter = 0
   let mult = 0
-  if (newCard.value.value > oldCard.value.value) {
+  oldVal = numValue(oldCard)
+  newVal = numValue(newCard)
+  if (newVal > oldVal) {
     mult = 1
-    while (newCard.value.value > oldCard.value.value) {
-      oldCard.value.value += 1
+    while (newVal > oldVal) {
+      oldVal += 1
       counter += 1
     }
-  } else if (newCard.value.value < oldCard.value.value) {
+  } else if (newVal < oldVal) {
     mult = 1
-    while (newCard.value.value < oldCard.value.value) {
-      oldCard.value.value += 1
+    while (newVal < oldVal) {
+      oldVal += 1
       counter += 1
     }
   }
