@@ -85,6 +85,20 @@
 
 <script setup>
 import { ref } from 'vue'
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user.js'
+
+const router = useRouter()
+const userStore = useUserStore()
+
+onMounted(async () => {
+  await userStore.checkLoggedInStatus()
+
+  if (!userStore.isLoggedIn) {
+    router.push('/')
+  }
+})
 
 let pChoice = ref('Choose a Coin!')
 const inputNumber = ref(0)
