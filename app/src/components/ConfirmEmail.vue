@@ -26,7 +26,9 @@
 import { onMounted, ref } from 'vue'
 import { createClient } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const loading = ref(true)
 const error = ref(null)
 
@@ -37,7 +39,7 @@ onMounted(async () => {
     error.value = confirmError.message
   } else {
     setTimeout(() => {
-      window.location.href = '/'
+      router.push('/')
     }, 2000)
   }
 

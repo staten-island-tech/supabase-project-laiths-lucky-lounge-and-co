@@ -80,7 +80,7 @@ const handleSignIn = async () => {
     error.value = signInError.message
     return
   }
-
+  userStore.login(data.user)
   router.push('/homepage')
 }
 </script>

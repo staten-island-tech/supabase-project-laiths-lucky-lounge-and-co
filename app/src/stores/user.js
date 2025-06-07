@@ -11,7 +11,8 @@ export const useUserStore = defineStore('user', () => {
     isLoggedIn.value = true
   }
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut()
     user.value = null
     isLoggedIn.value = false
   }
