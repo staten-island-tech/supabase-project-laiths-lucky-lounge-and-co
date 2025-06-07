@@ -22,7 +22,7 @@ onMounted(async () => {
     error.value = confirmError.message
   } else {
     setTimeout(() => {
-      window.location.href = '/homepage'
+      window.location.href = '/'
     }, 2000)
   }
 
