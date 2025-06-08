@@ -139,6 +139,7 @@ async function recordBet(netResult) {
   const { error } = await supabase
     .from('bets')
     .insert([{ username: username.value, result: netResult, game: 'Coin Flip' }])
+  console.log('Inserting bet:', username.value, netResult)
   if (error) {
     console.error('Error recording bet:', error)
   }
