@@ -1,16 +1,16 @@
 <template>
-  <div class="min-h-screen bg-gray-900 text-white pt-[20vh]">
+  <div class="min-h-screen bg-gray-900 text-white">
     <HomeHeader />
 
-    <div class="mt-6 max-w-5xl mx-auto grid md:grid-cols-2 gap-8 p-6">
-      <div class="bg-white/10 p-6 rounded-xl shadow-md flex flex-col">
-        <h2 class="text-2xl font-extrabold mb-4 text-yellow-400">🏆 Top 10 Highest Wins</h2>
-        <table class="w-full text-left text-base flex-grow">
+    <div class="mt-6 max-w-4xl mx-auto grid md:grid-cols-2 gap-6 p-4">
+      <div class="bg-white/10 p-4 rounded-xl shadow-md overflow-auto max-h-[50vh] flex flex-col">
+        <h2 class="text-xl font-bold mb-3 text-yellow-400">🏆 Top 10 Highest Wins</h2>
+        <table class="w-full text-left text-sm flex-grow">
           <thead class="border-b border-white/20">
             <tr>
-              <th class="py-3">Username</th>
-              <th class="py-3">Result</th>
-              <th class="py-3">Game</th>
+              <th class="py-2">Username</th>
+              <th class="py-2">Result</th>
+              <th class="py-2">Game</th>
             </tr>
           </thead>
           <tbody>
@@ -19,22 +19,22 @@
               :key="'top-' + index"
               class="border-b border-white/10 hover:bg-white/10 transition-colors"
             >
-              <td class="py-3">{{ entry.username }}</td>
-              <td class="py-3">${{ Number(entry.result).toFixed(2) }}</td>
-              <td class="py-3">{{ entry.game }}</td>
+              <td class="py-2">{{ entry.username }}</td>
+              <td class="py-2">${{ Number(entry.result).toFixed(2) }}</td>
+              <td class="py-2">{{ entry.game }}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="bg-white/10 p-6 rounded-xl shadow-md flex flex-col">
-        <h2 class="text-2xl font-extrabold mb-4 text-blue-400">🕒 10 Most Recent Bets</h2>
-        <table class="w-full text-left text-base flex-grow">
+      <div class="bg-white/10 p-4 rounded-xl shadow-md overflow-auto max-h-[50vh] flex flex-col">
+        <h2 class="text-xl font-bold mb-3 text-blue-400">🕒 10 Most Recent Bets</h2>
+        <table class="w-full text-left text-sm flex-grow">
           <thead class="border-b border-white/20">
             <tr>
-              <th class="py-3">Username</th>
-              <th class="py-3">Result</th>
-              <th class="py-3">Game</th>
+              <th class="py-2">Username</th>
+              <th class="py-2">Result</th>
+              <th class="py-2">Game</th>
             </tr>
           </thead>
           <tbody>
@@ -43,9 +43,9 @@
               :key="'recent-' + index"
               class="border-b border-white/10 hover:bg-white/10 transition-colors"
             >
-              <td class="py-3">{{ entry.username }}</td>
-              <td class="py-3">${{ Number(entry.result).toFixed(2) }}</td>
-              <td class="py-3">{{ entry.game }}</td>
+              <td class="py-2">{{ entry.username }}</td>
+              <td class="py-2">${{ Number(entry.result).toFixed(2) }}</td>
+              <td class="py-2">{{ entry.game }}</td>
             </tr>
           </tbody>
         </table>
