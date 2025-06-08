@@ -222,6 +222,16 @@ watch(money, () => {
   updateMoneyInSupabase()
 })
 
+watch(
+  () => userStore.user,
+  (newUser) => {
+    if (newUser?.user_metadata?.username) {
+      username.value = newUser.user_metadata.username
+    }
+  },
+  { immediate: true },
+)
+
 async function loadMoney() {
   if (!userId.value) return
   const { data, error } = await supabase
