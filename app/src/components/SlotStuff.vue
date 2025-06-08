@@ -88,7 +88,7 @@ function spin() {
   if (symbols.value[0] === symbols.value[1] && symbols.value[1] === symbols.value[2]) {
     money.value += betAmount.value * 10
     winMessage.value = `Jackpot! $${betAmount.value * 10}!`
-    recordBet(10 * bet.value)
+    recordBet(10 * betAmount.value)
   } else if (
     symbols.value[0] === symbols.value[1] ||
     symbols.value[1] === symbols.value[2] ||
@@ -96,12 +96,13 @@ function spin() {
   ) {
     money.value += betAmount.value * 1.5
     winMessage.value = `You win $${betAmount.value * 1.5}!`
-    recordBet(1.5 * bet.value)
+    recordBet(1.5 * betAmount.value)
   } else {
     winMessage.value = 'You lose!'
-    recordBet(-1 * bet.value)
+    recordBet(-1 * betAmount.value)
   }
 }
+
 async function spinAnimate() {
   if (clicked.value) return
   clicked.value = true
