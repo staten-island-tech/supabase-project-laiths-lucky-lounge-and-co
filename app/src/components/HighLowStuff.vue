@@ -27,13 +27,13 @@
     />
     <div v-if="gameStarted" class="space-x-4">
       <button
-        @click="[(choice = 'higher'), checkResult()]"
+        @click="[(choice.value = 'higher'), checkResult()]"
         class="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-md font-semibold"
       >
         Higher
       </button>
       <button
-        @click="[(choice = 'lower'), checkResult()]"
+        @click="[(choice.value = 'lower'), checkResult()]"
         class="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-md font-semibold"
       >
         Lower
@@ -101,13 +101,15 @@ async function newTurn() {
 }
 
 function checkResult() {
-  console.log(`old card ${oldCard.value.value} new card ${newCard.value.value}`)
-  if (newCard.value.value > oldCard.value.value) {
+  let oldC = numValue(oldCard.value)
+  let newC = numValue(newCard.value)
+  console.log(`old card ${oldC} new card ${newC}`)
+  if (newC > oldC) {
     turnResult.value = 'Higher'
-    console.log(turnResult.value)
-  } else if (newCard.value.value < oldCard.value.value) {
+    console.log(`correct is ${turnResult.value}`)
+  } else if (newC < oldC) {
     turnResult.value = 'Lower'
-    console.log(turnResult.value)
+    console.log(`correct is ${turnResult.value}`)
   }
   console.log(`choice ${choice.value}`)
   let mult = findMult()
