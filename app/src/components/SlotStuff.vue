@@ -120,10 +120,7 @@ async function spin() {
     winnings = betAmount.value * 1.5
     message = `You win $${winnings}!`
   }
-  if (message === 'You lose!') {
-    winnings = -betAmount.value
-  }
-  const netResult = winnings
+  const netResult = winnings - betAmount.value
   const success = await recordBetAndUpdateMoney(netResult)
   if (success) {
     winMessage.value = message
