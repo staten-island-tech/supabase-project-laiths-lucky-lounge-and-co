@@ -48,14 +48,10 @@ const giveStarter = async () => {
   const userId = userStore.user?.id
   if (!userId) return
 
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('balance')
-    .eq('id', userId)
-    .single()
+  const { data, error } = await supabase.from('users').select('money').eq('id', userId).single()
 
   if (!error && data?.balance === 0) {
-    await supabase.from('profiles').update({ balance: 100 }).eq('id', userId)
+    await supabase.from('users').update({ money: 100 }).eq('id', userId)
   }
 }
 </script>
