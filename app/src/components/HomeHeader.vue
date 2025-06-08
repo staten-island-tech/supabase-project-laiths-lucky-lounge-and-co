@@ -9,13 +9,13 @@
     <h1 class="text-[5vh] font-bold">Laith's Lucky Lounge <span class="text-xs">& co.</span></h1>
     <div class="dropdown dropdown-left absolute top-3 right-3">
       <button tabindex="0" class="btn btn-square">
-        <Gamepad2 class="h-5 w-5" />
+        <Gamepad2 class="h-5 w-5 text-black" />
       </button>
       <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 mr-3">
-        <li><RouterLink to="/blackjack">Blackjack</RouterLink></li>
-        <li><RouterLink to="/coinflip">Coin Flip</RouterLink></li>
-        <li><RouterLink to="/highlow">High/Low</RouterLink></li>
-        <li><RouterLink to="/slotpage">Slot Machine</RouterLink></li>
+        <li><RouterLink to="/blackjack" class="text-black">Blackjack</RouterLink></li>
+        <li><RouterLink to="/coinflip" class="text-black">Coin Flip</RouterLink></li>
+        <li><RouterLink to="/highlow" class="text-black">High/Low</RouterLink></li>
+        <li><RouterLink to="/slotpage" class="text-black">Slot Machine</RouterLink></li>
       </ul>
     </div>
   </div>
