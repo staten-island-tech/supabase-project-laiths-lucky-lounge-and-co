@@ -50,6 +50,7 @@ import { onMounted, ref } from 'vue'
 import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/stores/user'
 
+const userStore = useUserStore()
 const username = userStore.user?.user_metadata?.username
 const deckId = ref('')
 const gameStarted = ref(false)
@@ -62,7 +63,6 @@ const money = ref(0)
 const newCard = ref(null)
 const oldCard = ref(null)
 let cards = []
-const userStore = useUserStore()
 
 async function fetchNewDeck() {
   const res = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')

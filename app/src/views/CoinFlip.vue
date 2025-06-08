@@ -90,9 +90,9 @@ import { useRouter } from 'vue-router'
 import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/stores/user'
 
+const userStore = useUserStore()
 const username = userStore.user?.user_metadata?.username
 const router = useRouter()
-const userStore = useUserStore()
 
 onMounted(async () => {
   await userStore.checkLoggedInStatus()
