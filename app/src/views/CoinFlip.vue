@@ -61,7 +61,7 @@
       <div v-if="result" class="mt-4 flex justify-center">
         <img
           :key="flipKey"
-          :src="coinImages[result.value]"
+          :src="coinImages[`${result}`]"
           alt="Coin Result"
           class="w-24 h-24 flip-coin"
         />
@@ -105,11 +105,11 @@ const flipKey = ref(0)
 
 function updateBalance(amount, win) {
   if (win) {
-    money.value += amount
-    recordBet(amount)
+    money.value = Math.round(money.value * 100 + amount * 100) / 100
+    recordBet(Math.round(amount * 100) / 100)
   } else {
-    money.value -= amount
-    recordBet(-amount)
+    money.value = Math.round(money.value * 100 + amount * 100) / 100
+    recordBet(Math.round(amount * -100) / 100)
   }
 }
 
@@ -124,6 +124,8 @@ function flipcoin() {
   }
   const randomNumber = Math.random()
   result.value = randomNumber > 0.5 ? 'Heads' : 'Tails'
+  console.log(result.value)
+  console.log('Heads Tails')
   winLoss(pChoice.value)
   flipKey.value++
 }
