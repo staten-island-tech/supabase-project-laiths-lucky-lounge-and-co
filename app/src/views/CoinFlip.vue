@@ -61,7 +61,7 @@
       <div v-if="result" class="mt-4 flex justify-center">
         <img
           :key="flipKey"
-          :src="`../assets/${result.value}.png`"
+          :src="coinImages[result.value]"
           alt="Coin Result"
           class="w-24 h-24 flip-coin"
         />
@@ -88,6 +88,13 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/stores/user'
+import headsImg from '@/assets/Heads.png'
+import tailsImg from '@/assets/Tails.png'
+
+const coinImages = {
+  Heads: headsImg,
+  Tails: tailsImg,
+}
 
 const userStore = useUserStore()
 const username = computed(() => userStore.user?.user_metadata?.username)
@@ -95,7 +102,6 @@ const router = useRouter()
 
 onMounted(async () => {
   await userStore.checkLoggedInStatus()
-
   if (!userStore.isLoggedIn) {
     router.push('/')
   }
@@ -140,7 +146,6 @@ async function recordBet(netResult) {
   const { error } = await supabase
     .from('bets')
     .insert([{ username, result: netResult, game: 'Coin Flip' }])
-
   if (error) {
     console.error('Error recording bet:', error)
   }
@@ -149,7 +154,6 @@ async function recordBet(netResult) {
 async function updateMoneyInSupabase() {
   const userId = userStore.user?.id
   if (!userId) return
-
   await supabase.from('users').update({ money: money.value }).eq('id', userId)
 }
 
@@ -160,13 +164,12 @@ watch(money, () => {
 async function loadMoney() {
   const userId = userStore.user?.id
   if (!userId) return
-
-  const { data, error } = await supabase.from('users').select('money').eq('id', userId).single()
-
+  const { data } = await supabase.from('users').select('money').eq('id', userId).single()
   if (data) {
     money.value = data.money
   }
 }
+
 onMounted(() => {
   loadMoney()
 })
@@ -184,7 +187,6 @@ onMounted(() => {
     transform: rotateY(360deg);
   }
 }
-
 .flip-coin {
   animation: flip 0.6s ease-in-out;
 }
