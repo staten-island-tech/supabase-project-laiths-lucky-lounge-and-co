@@ -63,7 +63,7 @@ import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
-const username = computed(() => userStore.user?.user_metadata?.username)
+const username = ref('')
 const userId = computed(() => userStore.user?.id)
 
 const deckId = ref('')
@@ -205,7 +205,7 @@ async function recordBet(netResult) {
   if (!username.value) return
   const { error } = await supabase
     .from('bets')
-    .insert([{ username: username.value, result: netResult, game: 'High Low' }])
+    .insert([{ username: username.value, result: netResult, game: 'Coin Flip' }])
   if (error) console.error('Error recording bet:', error)
 }
 
@@ -251,6 +251,7 @@ function cashOut() {
 
 onMounted(() => {
   loadMoney()
+  username.value = userStore.user?.user_metadata?.username || ''
 })
 </script>
 

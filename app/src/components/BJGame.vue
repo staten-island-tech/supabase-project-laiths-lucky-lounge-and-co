@@ -81,7 +81,7 @@ import { useUserStore } from '@/stores/user'
 import { watch } from 'vue'
 
 const userStore = useUserStore()
-const username = computed(() => userStore.user?.user_metadata?.username)
+const username = ref('')
 
 const deckId = ref('')
 const playerHand = ref([])
@@ -248,7 +248,7 @@ async function resetGame() {
 async function recordBet(netResult) {
   const { error } = await supabase
     .from('bets')
-    .insert([{ username, result: netResult, game: 'Blackjack' }])
+    .insert([{ username: username.value, result: netResult, game: 'Coin Flip' }])
 
   if (error) {
     console.error('Error recording bet:', error)
@@ -280,5 +280,6 @@ async function loadMoney() {
 onMounted(() => {
   fetchNewDeck()
   loadMoney()
+  username.value = userStore.user?.user_metadata?.username || ''
 })
 </script>

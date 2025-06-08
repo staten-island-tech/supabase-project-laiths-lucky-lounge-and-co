@@ -97,15 +97,8 @@ const coinImages = {
 }
 
 const userStore = useUserStore()
-const username = computed(() => userStore.user?.user_metadata?.username)
+const username = ref('')
 const router = useRouter()
-
-onMounted(async () => {
-  await userStore.checkLoggedInStatus()
-  if (!userStore.isLoggedIn) {
-    router.push('/')
-  }
-})
 
 let pChoice = ref('Choose a Coin!')
 const inputNumber = ref(1)
@@ -145,7 +138,7 @@ function flipcoin() {
 async function recordBet(netResult) {
   const { error } = await supabase
     .from('bets')
-    .insert([{ username, result: netResult, game: 'Coin Flip' }])
+    .insert([{ username: username.value, result: netResult, game: 'Coin Flip' }])
   if (error) {
     console.error('Error recording bet:', error)
   }
@@ -172,6 +165,7 @@ async function loadMoney() {
 
 onMounted(() => {
   loadMoney()
+  username.value = userStore.user?.user_metadata?.username || ''
 })
 </script>
 
