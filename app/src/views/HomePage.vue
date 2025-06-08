@@ -2,50 +2,50 @@
   <div class="min-h-screen bg-gray-900 text-white">
     <HomeHeader />
 
-    <div class="mt-10 max-w-4xl mx-auto grid md:grid-cols-2 gap-8 p-6">
-      <div class="bg-white/10 p-6 rounded-xl shadow-md">
-        <h2 class="text-2xl font-bold mb-4 text-yellow-400 w-[40vw]">🏆 Top 10 Highest Wins</h2>
-        <table class="w-full text-left text-sm">
+    <div class="mt-10 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 p-8">
+      <div class="bg-white/10 p-8 rounded-xl shadow-md flex flex-col">
+        <h2 class="text-3xl font-extrabold mb-6 text-yellow-400">🏆 Top 10 Highest Wins</h2>
+        <table class="w-full text-left text-base flex-grow">
           <thead class="border-b border-white/20">
             <tr>
-              <th class="py-2">Username</th>
-              <th class="py-2">Result</th>
-              <th class="py-2">Game</th>
+              <th class="py-4">Username</th>
+              <th class="py-4">Result</th>
+              <th class="py-4">Game</th>
             </tr>
           </thead>
           <tbody>
             <tr
               v-for="(entry, index) in topWins"
               :key="'top-' + index"
-              class="border-b border-white/10"
+              class="border-b border-white/10 hover:bg-white/10 transition-colors"
             >
-              <td class="py-2">{{ entry.username }}</td>
-              <td class="py-2">${{ entry.result }}</td>
-              <td class="py-2">{{ entry.game }}</td>
+              <td class="py-4">{{ entry.username }}</td>
+              <td class="py-4">${{ Number(entry.result).toFixed(2) }}</td>
+              <td class="py-4">{{ entry.game }}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="bg-white/10 p-6 rounded-xl shadow-md">
-        <h2 class="text-2xl font-bold mb-4 text-blue-400 w-[40vw]">🕒 10 Most Recent Bets</h2>
-        <table class="w-full text-left text-sm">
+      <div class="bg-white/10 p-8 rounded-xl shadow-md flex flex-col">
+        <h2 class="text-3xl font-extrabold mb-6 text-blue-400">🕒 10 Most Recent Bets</h2>
+        <table class="w-full text-left text-base flex-grow">
           <thead class="border-b border-white/20">
             <tr>
-              <th class="py-2">Username</th>
-              <th class="py-2">Result</th>
-              <th class="py-2">Game</th>
+              <th class="py-4">Username</th>
+              <th class="py-4">Result</th>
+              <th class="py-4">Game</th>
             </tr>
           </thead>
           <tbody>
             <tr
               v-for="(entry, index) in recentBets"
               :key="'recent-' + index"
-              class="border-b border-white/10"
+              class="border-b border-white/10 hover:bg-white/10 transition-colors"
             >
-              <td class="py-2">{{ entry.username }}</td>
-              <td class="py-2">${{ entry.result }}</td>
-              <td class="py-2">{{ entry.game }}</td>
+              <td class="py-4">{{ entry.username }}</td>
+              <td class="py-4">${{ Number(entry.result).toFixed(2) }}</td>
+              <td class="py-4">{{ entry.game }}</td>
             </tr>
           </tbody>
         </table>
@@ -63,13 +63,15 @@ import { supabase } from '@/lib/supabase'
 
 const router = useRouter()
 const userStore = useUserStore()
-onMounted(async () => {
-  await userStore.checkLoggedInStatus()
-  if (!userStore.isLoggedIn) router.push('/')
-})
 
 const topWins = ref([])
 const recentBets = ref([])
+
+onMounted(async () => {
+  await userStore.checkLoggedInStatus()
+  if (!userStore.isLoggedIn) router.push('/')
+  await fetchLeaderboards()
+})
 
 async function fetchLeaderboards() {
   const { data: wins, error: err1 } = await supabase
@@ -86,13 +88,11 @@ async function fetchLeaderboards() {
     .limit(10)
   if (!err2) recentBets.value = recent
 }
-
-onMounted(fetchLeaderboards)
 </script>
 
 <style scoped>
 table th,
 table td {
-  padding-right: 1rem;
+  padding-right: 1.25rem;
 }
 </style>
