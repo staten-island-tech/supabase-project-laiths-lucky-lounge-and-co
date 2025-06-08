@@ -58,48 +58,36 @@
 import HomeHeader from '@/components/HomeHeader.vue'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user.js'
+import { useUserStore } from '@/stores/user'
 import { supabase } from '@/lib/supabase'
 
 const router = useRouter()
 const userStore = useUserStore()
+onMounted(async () => {
+  await userStore.checkLoggedInStatus()
+  if (!userStore.isLoggedIn) router.push('/')
+})
 
 const topWins = ref([])
 const recentBets = ref([])
 
-onMounted(async () => {
-  await userStore.checkLoggedInStatus()
-
-  if (!userStore.isLoggedIn) {
-    router.push('/')
-    return
-  }
-
-  await fetchLeaderboards()
-})
-
 async function fetchLeaderboards() {
-  const { data: topData, error: topError } = await supabase
+  const { data: wins, error: err1 } = await supabase
     .from('bets')
-    .select('username, result, game')
-    .gt('result', 0)
+    .select('id, username, result, game')
     .order('result', { ascending: false })
     .limit(10)
+  if (!err1) topWins.value = wins
 
-  if (!topError) {
-    topWins.value = topData
-  }
-
-  const { data: recentData, error: recentError } = await supabase
+  const { data: recent, error: err2 } = await supabase
     .from('bets')
-    .select('username, result, game')
-    .order('created_at', { ascending: false })
+    .select('id, username, result, game')
+    .order('placed_at', { ascending: false })
     .limit(10)
-
-  if (!recentError) {
-    recentBets.value = recentData
-  }
+  if (!err2) recentBets.value = recent
 }
+
+onMounted(fetchLeaderboards)
 </script>
 
 <style scoped>
