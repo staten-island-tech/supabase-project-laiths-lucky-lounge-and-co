@@ -42,8 +42,17 @@
       </button>
     </div>
 
-    <p class="text-lg font-bold">Money: ${{ money }}</p>
-    <p class="text-lg font-bold">Winnings: ${{ currentWinnings }}</p>
+    <!-- Cash Out Button -->
+    <button
+      v-if="gameStarted && currentWinnings > 0"
+      @click="cashOut"
+      class="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md font-semibold mt-4"
+    >
+      Cash Out
+    </button>
+
+    <p class="text-lg font-bold">Money: ${{ money.toFixed(2) }}</p>
+    <p class="text-lg font-bold">Winnings: ${{ currentWinnings.toFixed(2) }}</p>
     <p v-if="result" class="text-xl font-bold text-yellow-400">{{ result }}</p>
   </div>
 </template>
@@ -138,15 +147,15 @@ function checkResult() {
 
   if (turnResult.value === choice.value) {
     result.value = 'You win!'
-    const winnings = bet.value * (mult - 1)
-    currentWinnings.value += winnings
-    money.value += bet.value * mult
+    const winnings = roundToCents(bet.value * (mult - 1))
+    currentWinnings.value = roundToCents(currentWinnings.value + winnings)
+    money.value = roundToCents(money.value + bet.value * mult)
     recordBet('win')
     newTurn()
   } else if (mult === 1) {
     result.value = 'Tie!'
-    currentWinnings.value = bet.value
-    money.value += bet.value
+    currentWinnings.value = roundToCents(bet.value)
+    money.value = roundToCents(money.value + bet.value)
     recordBet('tie')
     newTurn()
   } else {
@@ -214,6 +223,18 @@ async function loadMoney() {
   } else if (error) {
     console.error('Error loading money:', error)
   }
+}
+
+function roundToCents(value) {
+  return Math.round(value * 100) / 100
+}
+
+function cashOut() {
+  const roundedWinnings = roundToCents(currentWinnings.value)
+  money.value = roundToCents(money.value + roundedWinnings)
+  currentWinnings.value = 0
+  gameStarted.value = false
+  result.value = `You cashed out $${roundedWinnings.toFixed(2)}!`
 }
 
 onMounted(() => {
