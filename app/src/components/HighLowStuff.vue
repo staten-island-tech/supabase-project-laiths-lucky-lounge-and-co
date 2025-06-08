@@ -189,7 +189,7 @@ async function recordBet(netResult) {
   if (!username.value) return
   const { error } = await supabase
     .from('bets')
-    .insert([{ username: username.value, result: netResult, game: 'Blackjack' }])
+    .insert([{ username: username.value, result: netResult, game: 'High Low' }])
   if (error) console.error('Error recording bet:', error)
 }
 
