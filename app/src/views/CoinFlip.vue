@@ -108,7 +108,7 @@ function updateBalance(amount, win) {
     money.value = Math.round(money.value * 100 + amount * 100) / 100
     recordBet(Math.round(amount * 100) / 100)
   } else {
-    money.value = Math.round(money.value * 100 + amount * 100) / 100
+    money.value = Math.round(money.value * 100 - amount * 100) / 100
     recordBet(Math.round(amount * -100) / 100)
   }
 }
