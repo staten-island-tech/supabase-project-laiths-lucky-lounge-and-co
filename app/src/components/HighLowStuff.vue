@@ -147,22 +147,17 @@ function checkResult() {
 
   if (turnResult.value === choice.value) {
     result.value = 'You win!'
-    const winnings = roundToCents(bet.value * (mult - 1))
-    currentWinnings.value = roundToCents(currentWinnings.value + winnings)
-    money.value = roundToCents(money.value + bet.value * mult)
-    recordBet('win')
+    currentWinnings.value = roundToCents(currentWinnings.value * mult)
     newTurn()
   } else if (mult === 1) {
     result.value = 'Tie!'
-    currentWinnings.value = roundToCents(bet.value)
-    money.value = roundToCents(money.value + bet.value)
-    recordBet('tie')
     newTurn()
   } else {
     result.value = 'You lose!'
     currentWinnings.value = 0
-    recordBet('loss')
+    recordBet(bet.value)
     gameStarted.value = false
+    oldCard.value = newCard.value
   }
 }
 
@@ -232,6 +227,7 @@ function roundToCents(value) {
 function cashOut() {
   const roundedWinnings = roundToCents(currentWinnings.value)
   money.value = roundToCents(money.value + roundedWinnings)
+  recordBet(currentWinnings.value)
   currentWinnings.value = 0
   gameStarted.value = false
   result.value = `You cashed out $${roundedWinnings.toFixed(2)}!`
