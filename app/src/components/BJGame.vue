@@ -53,7 +53,7 @@
       </button>
       <button
         @click="doubleDown"
-        :disabled="gameOver || !gameStarted || money < bet"
+        :disabled="gameOver || !gameStarted || money < bet || playerHand.length !== 2"
         class="px-6 py-3 bg-red-500 hover:bg-red-600 rounded-lg font-semibold text-lg disabled:bg-gray-600"
       >
         Double Down
