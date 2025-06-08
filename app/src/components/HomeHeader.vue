@@ -50,7 +50,7 @@ const giveStarter = async () => {
 
   const { data, error } = await supabase.from('users').select('money').eq('id', userId).single()
 
-  if (!error && data?.balance === 0) {
+  if (!error && data?.money === 0) {
     await supabase.from('users').update({ money: 100 }).eq('id', userId)
   }
 }
