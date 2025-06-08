@@ -110,10 +110,10 @@ const flipKey = ref(0)
 function updateBalance(amount, win) {
   if (win) {
     money.value += amount
-    recordBet(bet.value)
+    recordBet(amount)
   } else {
     money.value -= amount
-    recordBet(-1 * bet.value)
+    recordBet(-1 * amount)
   }
 }
 
