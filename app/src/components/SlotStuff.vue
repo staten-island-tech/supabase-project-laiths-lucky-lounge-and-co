@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import cherry from '../assets/cherryslots.png'
 import lemon from '../assets/lemonslots.png'
 import orange from '../assets/orangeslots.png'
