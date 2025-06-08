@@ -61,6 +61,7 @@ import bar from '../assets/barslots.png'
 import seven from '../assets/sevenslots.png'
 import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/stores/user'
+import { watch } from 'vue'
 
 const userStore = useUserStore()
 const username = userStore.user?.user_metadata?.username

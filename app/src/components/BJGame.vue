@@ -78,6 +78,7 @@ import { ref, computed, onMounted } from 'vue'
 import CardHand from './BJCardHand.vue'
 import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/stores/user'
+import { watch } from 'vue'
 
 const userStore = useUserStore()
 const username = userStore.user?.user_metadata?.username

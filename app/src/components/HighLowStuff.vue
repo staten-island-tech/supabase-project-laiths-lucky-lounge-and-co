@@ -49,6 +49,7 @@
 import { onMounted, ref } from 'vue'
 import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/stores/user'
+import { watch } from 'vue'
 
 const userStore = useUserStore()
 const username = userStore.user?.user_metadata?.username
