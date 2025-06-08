@@ -181,8 +181,23 @@ async function loadMoney() {
 
 onMounted(() => {
   loadMoney()
-  username.value = userStore.user?.user_metadata?.username || ''
+  loadUsername()
 })
+
+async function loadUsername() {
+  const userId = userStore.user?.id
+  if (!userId) return
+
+  const { data, error } = await supabase.from('users').select('username').eq('id', userId).single()
+
+  if (error) {
+    console.error('Failed to load username:', error.message)
+    return
+  }
+
+  username.value = data.username
+  console.log('Loaded username from DB:', username.value)
+}
 </script>
 
 <style scoped>
