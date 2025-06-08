@@ -1,55 +1,55 @@
 <template>
-  <div>
+  <div class="min-h-screen bg-gray-900 text-white">
     <HomeHeader />
 
-    <div class="max-w-3xl mx-auto mt-6 space-y-8">
-      <section class="bg-white rounded-2xl shadow-lg p-6">
-        <h2 class="text-2xl font-bold text-indigo-700 mb-4">🏆 Top 10 Highest Wins</h2>
-        <table class="w-full text-left">
-          <thead class="border-b border-gray-300">
+    <div class="mt-10 max-w-4xl mx-auto grid md:grid-cols-2 gap-8 p-6">
+      <div class="bg-white/10 p-6 rounded-xl shadow-md">
+        <h2 class="text-2xl font-bold mb-4 text-yellow-400">🏆 Top 10 Highest Wins</h2>
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-white/20">
             <tr>
-              <th class="py-2 px-3">Username</th>
-              <th class="py-2 px-3">Result</th>
-              <th class="py-2 px-3">Game</th>
+              <th class="py-2">Username</th>
+              <th class="py-2">Result</th>
+              <th class="py-2">Game</th>
             </tr>
           </thead>
           <tbody>
             <tr
-              v-for="bet in topWins"
-              :key="bet.id"
-              class="border-b last:border-none hover:bg-gray-50"
+              v-for="(entry, index) in topWins"
+              :key="'top-' + index"
+              class="border-b border-white/10"
             >
-              <td class="py-2 px-3 font-semibold">{{ bet.username }}</td>
-              <td class="py-2 px-3">${{ Number(bet.result).toFixed(2) }}</td>
-              <td class="py-2 px-3 text-gray-600">{{ bet.game }}</td>
+              <td class="py-2">{{ entry.username }}</td>
+              <td class="py-2">${{ entry.result }}</td>
+              <td class="py-2">{{ entry.game }}</td>
             </tr>
           </tbody>
         </table>
-      </section>
+      </div>
 
-      <section class="bg-white rounded-2xl shadow-lg p-6">
-        <h2 class="text-2xl font-bold text-indigo-700 mb-4">📅 10 Most Recent Bets</h2>
-        <table class="w-full text-left">
-          <thead class="border-b border-gray-300">
+      <div class="bg-white/10 p-6 rounded-xl shadow-md">
+        <h2 class="text-2xl font-bold mb-4 text-blue-400">🕒 10 Most Recent Bets</h2>
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-white/20">
             <tr>
-              <th class="py-2 px-3">Username</th>
-              <th class="py-2 px-3">Result</th>
-              <th class="py-2 px-3">Game</th>
+              <th class="py-2">Username</th>
+              <th class="py-2">Result</th>
+              <th class="py-2">Game</th>
             </tr>
           </thead>
           <tbody>
             <tr
-              v-for="bet in recentBets"
-              :key="bet.id"
-              class="border-b last:border-none hover:bg-gray-50"
+              v-for="(entry, index) in recentBets"
+              :key="'recent-' + index"
+              class="border-b border-white/10"
             >
-              <td class="py-2 px-3 font-semibold">{{ bet.username }}</td>
-              <td class="py-2 px-3">${{ Number(bet.result).toFixed(2) }}</td>
-              <td class="py-2 px-3 text-gray-600">{{ bet.game }}</td>
+              <td class="py-2">{{ entry.username }}</td>
+              <td class="py-2">${{ entry.result }}</td>
+              <td class="py-2">{{ entry.game }}</td>
             </tr>
           </tbody>
         </table>
-      </section>
+      </div>
     </div>
   </div>
 </template>
@@ -58,7 +58,7 @@
 import HomeHeader from '@/components/HomeHeader.vue'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/user.js'
 import { supabase } from '@/lib/supabase'
 
 const router = useRouter()
@@ -69,27 +69,36 @@ const recentBets = ref([])
 
 onMounted(async () => {
   await userStore.checkLoggedInStatus()
+
   if (!userStore.isLoggedIn) {
     router.push('/')
     return
   }
+
   await fetchLeaderboards()
 })
 
 async function fetchLeaderboards() {
-  const { data: wins, error: err1 } = await supabase
+  const { data: topData, error: topError } = await supabase
     .from('bets')
-    .select('id, username, result, game')
+    .select('username, result, game')
+    .gt('result', 0)
     .order('result', { ascending: false })
     .limit(10)
-  if (!err1) topWins.value = wins
 
-  const { data: recent, error: err2 } = await supabase
+  if (!topError) {
+    topWins.value = topData
+  }
+
+  const { data: recentData, error: recentError } = await supabase
     .from('bets')
-    .select('id, username, result, game')
-    .order('placed_at', { ascending: false })
+    .select('username, result, game')
+    .order('created_at', { ascending: false })
     .limit(10)
-  if (!err2) recentBets.value = recent
+
+  if (!recentError) {
+    recentBets.value = recentData
+  }
 }
 </script>
 
