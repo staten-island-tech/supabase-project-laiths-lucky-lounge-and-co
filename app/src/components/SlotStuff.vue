@@ -64,7 +64,8 @@ import { useUserStore } from '@/stores/user'
 import { watch } from 'vue'
 
 const userStore = useUserStore()
-const username = userStore.user?.user_metadata?.username
+const username = computed(() => userStore.user?.user_metadata?.username)
+
 const clicked = ref(false)
 const money = ref(0)
 const betAmount = ref(1)

@@ -81,7 +81,7 @@ import { useUserStore } from '@/stores/user'
 import { watch } from 'vue'
 
 const userStore = useUserStore()
-const username = userStore.user?.user_metadata?.username
+const username = computed(() => userStore.user?.user_metadata?.username)
 
 const deckId = ref('')
 const playerHand = ref([])

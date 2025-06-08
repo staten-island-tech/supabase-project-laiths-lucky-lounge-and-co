@@ -19,26 +19,29 @@
         Place Bet
       </button>
     </div>
+
     <img
+      v-if="oldCard"
       :src="oldCard.image"
       :alt="`${oldCard.value} of ${oldCard.suit}`"
-      v-if="oldCard"
       class="w-32 h-auto"
     />
+
     <div v-if="gameStarted" class="space-x-4">
       <button
-        @click="[(choice.value = 'higher'), checkResult()]"
+        @click="makeChoice('higher')"
         class="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-md font-semibold"
       >
         Higher
       </button>
       <button
-        @click="[(choice.value = 'lower'), checkResult()]"
+        @click="makeChoice('lower')"
         class="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-md font-semibold"
       >
         Lower
       </button>
     </div>
+
     <p class="text-lg font-bold">Money: ${{ money }}</p>
     <p class="text-lg font-bold">Winnings: ${{ currentWinnings }}</p>
     <p v-if="result" class="text-xl font-bold text-yellow-400">{{ result }}</p>
@@ -46,13 +49,14 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/stores/user'
-import { watch } from 'vue'
 
 const userStore = useUserStore()
-const username = userStore.user?.user_metadata?.username
+const username = computed(() => userStore.user?.user_metadata?.username)
+const userId = computed(() => userStore.user?.id)
+
 const deckId = ref('')
 const gameStarted = ref(false)
 const result = ref('')
@@ -63,7 +67,6 @@ const currentWinnings = ref(0)
 const money = ref(0)
 const newCard = ref(null)
 const oldCard = ref(null)
-let cards = []
 
 async function fetchNewDeck() {
   const res = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
@@ -72,6 +75,10 @@ async function fetchNewDeck() {
 }
 
 async function drawCards(count) {
+  if (!deckId.value) {
+    console.error('Deck ID is not set')
+    return []
+  }
   const res = await fetch(
     `https://deckofcardsapi.com/api/deck/${deckId.value}/draw/?count=${count}`,
   )
@@ -85,45 +92,67 @@ function validateBet() {
 }
 
 async function startGame() {
+  if (bet.value > money.value) {
+    result.value = 'Not enough money to bet!'
+    return
+  }
+
+  money.value -= bet.value
+  currentWinnings.value = bet.value
   gameStarted.value = true
   result.value = ''
-  await fetchNewDeck()
-  oldCard.value = ''
-  const cards = await drawCards(1)
-  newCard.value = cards[0]
+  oldCard.value = null
 
-  newTurn()
+  await fetchNewDeck()
+  const cards = await drawCards(1)
+  if (cards.length > 0) {
+    newCard.value = cards[0]
+    newTurn()
+  }
 }
 
 async function newTurn() {
   oldCard.value = newCard.value
-  cards = await drawCards(1)
-  newCard.value = cards[0]
+  const cards = await drawCards(1)
+  if (cards.length > 0) {
+    newCard.value = cards[0]
+  }
+}
+
+function makeChoice(selection) {
+  choice.value = selection
+  checkResult()
 }
 
 function checkResult() {
-  let oldC = numValue(oldCard.value)
-  let newC = numValue(newCard.value)
-  console.log(`old card ${oldC} new card ${newC}`)
-  if (newC > oldC) {
-    turnResult.value = 'Higher'
-    console.log(`correct is ${turnResult.value}`)
-  } else if (newC < oldC) {
-    turnResult.value = 'Lower'
-    console.log(`correct is ${turnResult.value}`)
+  if (!oldCard.value || !newCard.value) {
+    result.value = 'Card error!'
+    return
   }
-  console.log(`choice ${choice.value}`)
-  let mult = findMult()
+
+  const oldC = numValue(oldCard.value)
+  const newC = numValue(newCard.value)
+
+  turnResult.value = newC > oldC ? 'higher' : newC < oldC ? 'lower' : 'tie'
+  const mult = findMult(oldC, newC)
+
   if (turnResult.value === choice.value) {
     result.value = 'You win!'
-    currentWinnings.value *= mult
+    const winnings = bet.value * (mult - 1)
+    currentWinnings.value += winnings
+    money.value += bet.value * mult
+    recordBet('win')
     newTurn()
-  } else if (mult == 1) {
+  } else if (mult === 1) {
     result.value = 'Tie!'
+    currentWinnings.value = bet.value
+    money.value += bet.value
+    recordBet('tie')
     newTurn()
   } else {
     result.value = 'You lose!'
-    money.value -= bet.value
+    currentWinnings.value = 0
+    recordBet('loss')
     gameStarted.value = false
   }
 }
@@ -143,48 +172,30 @@ function numValue(card) {
   }
 }
 
-function findMult() {
-  let counter = 0
-  let mult = 0
-  oldVal = numValue(oldCard)
-  newVal = numValue(newCard)
-  if (newVal > oldVal) {
-    mult = 1
-    while (newVal > oldVal) {
-      oldVal += 1
-      counter += 1
-    }
-  } else if (newVal < oldVal) {
-    mult = 1
-    while (newVal < oldVal) {
-      oldVal += 1
-      counter += 1
-    }
+function findMult(oldVal, newVal) {
+  let mult = 1
+  let diff = Math.abs(newVal - oldVal)
+  for (let i = 0; i < diff; i++) {
+    mult *= 1.05
   }
-  if (counter == 0) {
-    return mult
-  } else {
-    for (let i = 0; i < counter; i++) {
-      mult *= 1.05
-    }
-    return mult
-  }
+  return mult
 }
+
 async function recordBet(netResult) {
+  if (!username.value) return
   const { error } = await supabase
     .from('bets')
-    .insert([{ username, result: netResult, game: 'Blackjack' }])
-
-  if (error) {
-    console.error('Error recording bet:', error)
-  }
+    .insert([{ username: username.value, result: netResult, game: 'Blackjack' }])
+  if (error) console.error('Error recording bet:', error)
 }
 
 async function updateMoneyInSupabase() {
-  const userId = userStore.user?.id
-  if (!userId) return
-
-  await supabase.from('users').update({ money: money.value }).eq('id', userId)
+  if (!userId.value) return
+  const { error } = await supabase
+    .from('users')
+    .update({ money: money.value })
+    .eq('id', userId.value)
+  if (error) console.error('Error updating money:', error)
 }
 
 watch(money, () => {
@@ -192,15 +203,19 @@ watch(money, () => {
 })
 
 async function loadMoney() {
-  const userId = userStore.user?.id
-  if (!userId) return
-
-  const { data, error } = await supabase.from('users').select('money').eq('id', userId).single()
-
+  if (!userId.value) return
+  const { data, error } = await supabase
+    .from('users')
+    .select('money')
+    .eq('id', userId.value)
+    .single()
   if (data) {
     money.value = data.money
+  } else if (error) {
+    console.error('Error loading money:', error)
   }
 }
+
 onMounted(() => {
   loadMoney()
 })
