@@ -57,7 +57,9 @@
 import { ref } from 'vue'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user.js'
 
+const userStore = useUserStore()
 const email = ref('')
 const password = ref('')
 const isLoading = ref(false)
