@@ -3,7 +3,7 @@
     <HomeHeader />
 
     <div class="mt-6 max-w-4xl mx-auto grid md:grid-cols-2 gap-6 p-6">
-      <div class="bg-white/10 p-6 rounded-xl shadow-md overflow-auto max-h-[60vh] flex flex-col">
+      <div class="bg-white/10 p-6 rounded-xl shadow-md overflow-auto max-h-[70vh] flex flex-col">
         <h2 class="text-2xl font-bold mb-4 text-yellow-400">🏆 Top 10 Highest Wins</h2>
         <table class="w-full text-left text-base flex-grow">
           <thead class="border-b border-white/20">
@@ -27,7 +27,7 @@
         </table>
       </div>
 
-      <div class="bg-white/10 p-6 rounded-xl shadow-md overflow-auto max-h-[60vh] flex flex-col">
+      <div class="bg-white/10 p-6 rounded-xl shadow-md overflow-auto max-h-[70vh] flex flex-col">
         <h2 class="text-2xl font-bold mb-4 text-blue-400">🕒 10 Most Recent Bets</h2>
         <table class="w-full text-left text-base flex-grow">
           <thead class="border-b border-white/20">
