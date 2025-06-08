@@ -44,12 +44,6 @@
         Sign Up
       </RouterLink>
     </div>
-    <RouterLink
-      to="/homepage"
-      class="absolute bottom-0 right-0 m-4 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition"
-    >
-      Enter Game Room
-    </RouterLink>
   </div>
 </template>
 
