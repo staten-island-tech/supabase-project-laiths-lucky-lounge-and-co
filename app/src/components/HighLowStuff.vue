@@ -42,7 +42,6 @@
       </button>
     </div>
 
-    <!-- Cash Out Button -->
     <button
       v-if="gameStarted && currentWinnings > 0"
       @click="cashOut"
@@ -69,7 +68,6 @@ const userId = computed(() => userStore.user?.id)
 const deckId = ref('')
 const gameStarted = ref(false)
 const result = ref('')
-const turnResult = ref('')
 const choice = ref('')
 const bet = ref(1)
 const currentWinnings = ref(0)
@@ -84,10 +82,7 @@ async function fetchNewDeck() {
 }
 
 async function drawCards(count) {
-  if (!deckId.value) {
-    console.error('Deck ID is not set')
-    return []
-  }
+  if (!deckId.value) return []
   const res = await fetch(
     `https://deckofcardsapi.com/api/deck/${deckId.value}/draw/?count=${count}`,
   )
@@ -100,21 +95,53 @@ function validateBet() {
   if (bet.value < 1) bet.value = 1
 }
 
+async function recordBet(netResult) {
+  if (!username.value) return
+  await supabase
+    .from('bets')
+    .insert([{ username: username.value, result: netResult, game: 'High Low' }])
+}
+
+async function updateMoneyInSupabase() {
+  if (!userId.value) return
+  await supabase.from('users').update({ money: money.value }).eq('id', userId.value)
+}
+
+watch(money, () => {
+  updateMoneyInSupabase()
+})
+
+watch(
+  () => userStore.user,
+  (newUser) => {
+    if (newUser?.user_metadata?.username) username.value = newUser.user_metadata.username
+  },
+  { immediate: true },
+)
+
+async function loadMoney() {
+  if (!userId.value) return
+  const { data } = await supabase.from('users').select('money').eq('id', userId.value).single()
+  if (data) money.value = data.money
+}
+
+function roundToCents(value) {
+  return Math.round(value * 100) / 100
+}
+
 async function startGame() {
   if (bet.value > money.value) {
     result.value = 'Not enough money to bet!'
     return
   }
-
-  money.value -= bet.value
+  money.value = roundToCents(money.value - bet.value)
   currentWinnings.value = bet.value
   gameStarted.value = true
   result.value = ''
   oldCard.value = null
-
   await fetchNewDeck()
   const cards = await drawCards(1)
-  if (cards.length > 0) {
+  if (cards.length) {
     newCard.value = cards[0]
     newTurn()
   }
@@ -123,42 +150,7 @@ async function startGame() {
 async function newTurn() {
   oldCard.value = newCard.value
   const cards = await drawCards(1)
-  if (cards.length > 0) {
-    newCard.value = cards[0]
-  }
-}
-
-function makeChoice(selection) {
-  choice.value = selection
-  checkResult()
-}
-
-function checkResult() {
-  if (!oldCard.value || !newCard.value) {
-    result.value = 'Card error!'
-    return
-  }
-
-  const oldC = numValue(oldCard.value)
-  const newC = numValue(newCard.value)
-
-  turnResult.value = newC > oldC ? 'higher' : newC < oldC ? 'lower' : 'tie'
-  const mult = findMult(oldC, newC, turnResult.value)
-
-  if (turnResult.value === choice.value) {
-    result.value = 'You win!'
-    currentWinnings.value = roundToCents(currentWinnings.value * mult)
-    newTurn()
-  } else if (mult === 1) {
-    result.value = 'Tie!'
-    newTurn()
-  } else {
-    result.value = 'You lose!'
-    currentWinnings.value = 0
-    recordBet(bet.value)
-    gameStarted.value = false
-    oldCard.value = newCard.value
-  }
+  if (cards.length) newCard.value = cards[0]
 }
 
 function numValue(card) {
@@ -179,81 +171,50 @@ function numValue(card) {
 function findMult(oldVal, newVal, turn) {
   let counter = 0
   let mult = 1
-
   if (turn === 'higher') {
-    if (oldVal > 7) {
-      counter = newVal
-    } else {
-      counter = oldVal
-    }
+    counter = oldVal > 7 ? newVal : oldVal
   } else if (turn === 'lower') {
-    if (oldVal < 8) {
-      counter = 13 - newVal + 1
-    } else {
-      counter = 13 - oldVal + 1
-    }
+    counter = oldVal < 8 ? 14 - newVal : 14 - oldVal
   }
-
-  for (let i = 0; i < counter; i++) {
-    mult *= 1.05
-  }
-
+  for (let i = 0; i < counter; i++) mult *= 1.05
   return mult
 }
 
-async function recordBet(netResult) {
-  if (!username.value) return
-  const { error } = await supabase
-    .from('bets')
-    .insert([{ username: username.value, result: netResult, game: 'High Low' }])
-  if (error) console.error('Error recording bet:', error)
-}
+async function checkResult() {
+  if (!oldCard.value || !newCard.value) {
+    result.value = 'Card error!'
+    return
+  }
+  const oldC = numValue(oldCard.value)
+  const newC = numValue(newCard.value)
+  const turnResult = newC > oldC ? 'higher' : newC < oldC ? 'lower' : 'tie'
+  const mult = findMult(oldC, newC, turnResult)
 
-async function updateMoneyInSupabase() {
-  if (!userId.value) return
-  const { error } = await supabase
-    .from('users')
-    .update({ money: money.value })
-    .eq('id', userId.value)
-  if (error) console.error('Error updating money:', error)
-}
-
-watch(money, () => {
-  updateMoneyInSupabase()
-})
-
-watch(
-  () => userStore.user,
-  (newUser) => {
-    if (newUser?.user_metadata?.username) {
-      username.value = newUser.user_metadata.username
-    }
-  },
-  { immediate: true },
-)
-
-async function loadMoney() {
-  if (!userId.value) return
-  const { data, error } = await supabase
-    .from('users')
-    .select('money')
-    .eq('id', userId.value)
-    .single()
-  if (data) {
-    money.value = data.money
-  } else if (error) {
-    console.error('Error loading money:', error)
+  if (turnResult === choice.value) {
+    result.value = 'You win!'
+    currentWinnings.value = roundToCents(currentWinnings.value * mult)
+    await newTurn()
+  } else if (turnResult === 'tie') {
+    result.value = 'Tie!'
+    await newTurn()
+  } else {
+    result.value = 'You lose!'
+    currentWinnings.value = 0
+    await recordBet(-bet.value)
+    gameStarted.value = false
+    oldCard.value = newCard.value
   }
 }
 
-function roundToCents(value) {
-  return Math.round(value * 100) / 100
+function makeChoice(selection) {
+  choice.value = selection
+  checkResult()
 }
 
-function cashOut() {
+async function cashOut() {
   const roundedWinnings = roundToCents(currentWinnings.value)
   money.value = roundToCents(money.value + roundedWinnings)
-  recordBet(currentWinnings.value)
+  await recordBet(roundedWinnings)
   currentWinnings.value = 0
   gameStarted.value = false
   result.value = `You cashed out $${roundedWinnings.toFixed(2)}!`

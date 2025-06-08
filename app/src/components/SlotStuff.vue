@@ -2,21 +2,21 @@
   <div class="h-screen bg-gray-900 flex flex-col justify-center">
     <div class="text-white text-6xl font-bold mx-auto">Slot Machine</div>
     <div class="text-white text-2xl font-bold mx-auto mt-4">Balance: ${{ money }}</div>
-    <div class="mx-auto mt-4">
+    <div class="mx-auto mt-4 w-40">
       <input
         type="number"
         v-model.number="betAmount"
         placeholder="Bet"
-        class="text-white w-full p-2 border-2 border-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+        class="text-white w-full p-2 border-2 border-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-800"
         :max="money"
         :min="1"
       />
     </div>
-
     <div class="mx-auto mt-8">
       <button
         @click="spinAnimate"
-        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
+        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full disabled:opacity-50"
+        :disabled="clicked"
       >
         Spin
       </button>
@@ -50,8 +50,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
-import 'animate.css'
+import { ref, onMounted } from 'vue'
 import cherry from '../assets/cherryslots.png'
 import lemon from '../assets/lemonslots.png'
 import orange from '../assets/orangeslots.png'
@@ -64,42 +63,66 @@ import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
 const username = ref('')
-
 const clicked = ref(false)
 const money = ref(0)
 const betAmount = ref(1)
 const symbols = ref(['', '', ''])
-const slotSymbols = [cherry, lemon, orange, plum, bell, bar, seven]
 const winMessage = ref('')
+const slotSymbols = [cherry, lemon, orange, plum, bell, bar, seven]
+
 function rando() {
   return Math.random()
 }
-function spin() {
+
+async function recordBetAndUpdateMoney(netResult) {
+  const userId = userStore.user?.id
+  if (!userId) {
+    winMessage.value = 'You must be logged in to play.'
+    return false
+  }
+  const newBalance = money.value + netResult
+  const { error: betError } = await supabase
+    .from('bets')
+    .insert([{ username: username.value, result: netResult, game: 'Slots' }])
+  if (betError) {
+    winMessage.value = 'Failed to record bet, please try again.'
+    return false
+  }
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({ money: newBalance })
+    .eq('id', userId)
+  if (updateError) {
+    winMessage.value = 'Failed to update balance, please try again.'
+    return false
+  }
+  money.value = newBalance
+  return true
+}
+
+async function spin() {
   if (betAmount.value > money.value || betAmount.value <= 0) {
-    winMessage.value = 'Invalid bet! (what a bum u thought u could cheat)'
+    winMessage.value = 'Invalid bet!'
     return
   }
-  let nums = []
-  money.value -= betAmount.value
-  for (let i = 0; i < 3; i++) {
-    nums.push(Math.floor(Math.random() * slotSymbols.length))
-  }
-  symbols.value = nums.map((num) => slotSymbols[num])
+  const nums = Array.from({ length: 3 }, () => Math.floor(Math.random() * slotSymbols.length))
+  symbols.value = nums.map((i) => slotSymbols[i])
+  let netResult = -betAmount.value
+  let message = 'You lose!'
   if (symbols.value[0] === symbols.value[1] && symbols.value[1] === symbols.value[2]) {
-    money.value += betAmount.value * 10
-    winMessage.value = `Jackpot! $${betAmount.value * 10}!`
-    recordBet(10 * betAmount.value)
+    netResult = betAmount.value * 10
+    message = `Jackpot! $${netResult}!`
   } else if (
     symbols.value[0] === symbols.value[1] ||
     symbols.value[1] === symbols.value[2] ||
     symbols.value[0] === symbols.value[2]
   ) {
-    money.value += betAmount.value * 1.5
-    winMessage.value = `You win $${betAmount.value * 1.5}!`
-    recordBet(1.5 * betAmount.value)
-  } else {
-    winMessage.value = 'You lose!'
-    recordBet(-1 * betAmount.value)
+    netResult = betAmount.value * 1.5
+    message = `You win $${netResult}!`
+  }
+  const success = await recordBetAndUpdateMoney(netResult)
+  if (success) {
+    winMessage.value = message
   }
 }
 
@@ -114,51 +137,19 @@ async function spinAnimate() {
     ]
     await new Promise((resolve) => setTimeout(resolve, 150))
   }
-  spin()
+  await spin()
   clicked.value = false
 }
-
-async function recordBet(netResult) {
-  const { error } = await supabase
-    .from('bets')
-    .insert([{ username: username.value, result: netResult, game: 'Slots' }])
-
-  if (error) {
-    console.error('Error recording bet:', error)
-  }
-}
-
-async function updateMoneyInSupabase() {
-  const userId = userStore.user?.id
-  if (!userId) return
-
-  await supabase.from('users').update({ money: money.value }).eq('id', userId)
-}
-
-watch(money, () => {
-  updateMoneyInSupabase()
-})
-
-watch(
-  () => userStore.user,
-  (newUser) => {
-    if (newUser?.user_metadata?.username) {
-      username.value = newUser.user_metadata.username
-    }
-  },
-  { immediate: true },
-)
 
 async function loadMoney() {
   const userId = userStore.user?.id
   if (!userId) return
-
-  const { data, error } = await supabase.from('users').select('money').eq('id', userId).single()
-
+  const { data } = await supabase.from('users').select('money').eq('id', userId).single()
   if (data) {
     money.value = data.money
   }
 }
+
 onMounted(() => {
   loadMoney()
   username.value = userStore.user?.user_metadata?.username || ''

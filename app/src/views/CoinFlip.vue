@@ -84,8 +84,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, watch } from 'vue'
 import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/stores/user'
 import headsImg from '@/assets/Heads.png'
@@ -98,12 +97,10 @@ const coinImages = {
 
 const userStore = useUserStore()
 const username = ref('')
-const router = useRouter()
-
-let pChoice = ref('Choose a Coin!')
 const inputNumber = ref(1)
+const pChoice = ref('Choose a Coin!')
 const result = ref('')
-let money = ref(0)
+const money = ref(0)
 const flipKey = ref(0)
 
 function updateBalance(amount, win) {
@@ -112,16 +109,12 @@ function updateBalance(amount, win) {
     recordBet(amount)
   } else {
     money.value -= amount
-    recordBet(-1 * amount)
+    recordBet(-amount)
   }
 }
 
 function winLoss(choice) {
-  if (result.value === choice) {
-    updateBalance(inputNumber.value, true)
-  } else {
-    updateBalance(inputNumber.value, false)
-  }
+  updateBalance(inputNumber.value, result.value === choice)
 }
 
 function flipcoin() {
@@ -136,13 +129,9 @@ function flipcoin() {
 }
 
 async function recordBet(netResult) {
-  const { error } = await supabase
+  await supabase
     .from('bets')
     .insert([{ username: username.value, result: netResult, game: 'Coin Flip' }])
-  console.log('Inserting bet:', username.value, netResult)
-  if (error) {
-    console.error('Error recording bet:', error)
-  }
 }
 
 async function updateMoneyInSupabase() {
@@ -154,49 +143,26 @@ async function updateMoneyInSupabase() {
 watch(money, () => {
   updateMoneyInSupabase()
 })
-console.log('userStore.user:', userStore.user)
 
 watch(
   () => userStore.user,
-  (newUser) => {
-    console.log('watch fired — newUser:', newUser)
-    if (newUser?.user_metadata?.username) {
-      username.value = newUser.user_metadata.username
-      console.log('Username set to:', username.value)
-    } else {
-      console.warn('user_metadata.username missing')
-    }
+  async (newUser) => {
+    if (!newUser?.id) return
+    const { data } = await supabase.from('users').select('username').eq('id', newUser.id).single()
+    if (data) username.value = data.username
   },
   { immediate: true },
 )
+
+onMounted(() => {
+  loadMoney()
+})
 
 async function loadMoney() {
   const userId = userStore.user?.id
   if (!userId) return
   const { data } = await supabase.from('users').select('money').eq('id', userId).single()
-  if (data) {
-    money.value = data.money
-  }
-}
-
-onMounted(() => {
-  loadMoney()
-  loadUsername()
-})
-
-async function loadUsername() {
-  const userId = userStore.user?.id
-  if (!userId) return
-
-  const { data, error } = await supabase.from('users').select('username').eq('id', userId).single()
-
-  if (error) {
-    console.error('Failed to load username:', error.message)
-    return
-  }
-
-  username.value = data.username
-  console.log('Loaded username from DB:', username.value)
+  if (data) money.value = data.money
 }
 </script>
 

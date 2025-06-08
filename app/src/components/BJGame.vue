@@ -3,7 +3,7 @@
     class="bg-green-900 min-h-screen py-10 px-4 text-white font-sans flex flex-col items-center space-y-10"
   >
     <div class="text-center">
-      <p class="text-3xl font-bold mb-2">💰 Money: ${{ money }}</p>
+      <p class="text-3xl font-bold mb-2">Money: ${{ money }}</p>
 
       <div
         v-if="!gameStarted"
