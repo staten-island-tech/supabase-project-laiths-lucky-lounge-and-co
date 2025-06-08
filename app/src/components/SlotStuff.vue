@@ -150,6 +150,16 @@ async function loadMoney() {
   }
 }
 
+watch(
+  () => userStore.user,
+  async (newUser) => {
+    if (!newUser?.id) return
+    const { data } = await supabase.from('users').select('username').eq('id', newUser.id).single()
+    if (data) username.value = data.username
+  },
+  { immediate: true },
+)
+
 onMounted(() => {
   loadMoney()
   username.value = userStore.user?.user_metadata?.username || ''
