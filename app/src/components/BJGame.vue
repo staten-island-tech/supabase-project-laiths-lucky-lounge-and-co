@@ -207,7 +207,7 @@ async function stand() {
     money.value += bet.value * 2
     recordBet(bet.value)
   } else {
-    result.value = "It's a tie!"
+    result.value = "It's a push!"
     money.value += bet.value
     recordBet(0)
   }

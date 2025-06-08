@@ -106,7 +106,6 @@ function spin() {
 async function spinAnimate() {
   if (clicked.value) return
   clicked.value = true
-  const start = Date.now()
   for (let i = 0; i < 10; i++) {
     symbols.value = [
       slotSymbols[Math.floor(Math.random() * slotSymbols.length)],
