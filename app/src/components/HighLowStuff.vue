@@ -177,9 +177,23 @@ function numValue(card) {
 }
 
 function findMult(oldVal, newVal) {
+  let counter = 0
   let mult = 1
-  let diff = Math.abs(newVal - oldVal)
-  for (let i = 0; i < diff; i++) {
+  oldVal = numValue(oldCard.value)
+  newVal = numValue(newCard.value)
+  if (newVal > oldVal) {
+    while (newVal > oldVal) {
+      oldVal += 1
+      counter += 1
+    }
+  } else if (newVal < oldVal) {
+    while (newVal < oldVal) {
+      oldVal += 1
+      counter += 1
+    }
+  }
+
+  for (let i = 0; i < counter; i++) {
     mult *= 1.05
   }
   return mult
