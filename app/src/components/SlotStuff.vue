@@ -107,19 +107,23 @@ async function spin() {
   }
   const nums = Array.from({ length: 3 }, () => Math.floor(Math.random() * slotSymbols.length))
   symbols.value = nums.map((i) => slotSymbols[i])
-  let netResult = -betAmount.value
+  let winnings = 0
   let message = 'You lose!'
   if (symbols.value[0] === symbols.value[1] && symbols.value[1] === symbols.value[2]) {
-    netResult = betAmount.value * 10
-    message = `Jackpot! $${netResult}!`
+    winnings = betAmount.value * 10
+    message = `Jackpot! You win $${winnings}!`
   } else if (
     symbols.value[0] === symbols.value[1] ||
     symbols.value[1] === symbols.value[2] ||
     symbols.value[0] === symbols.value[2]
   ) {
-    netResult = betAmount.value * 1.5
-    message = `You win $${netResult}!`
+    winnings = betAmount.value * 1.5
+    message = `You win $${winnings}!`
   }
+  if (message === 'You lose!') {
+    winnings = -betAmount.value
+  }
+  const netResult = winnings
   const success = await recordBetAndUpdateMoney(netResult)
   if (success) {
     winMessage.value = message
