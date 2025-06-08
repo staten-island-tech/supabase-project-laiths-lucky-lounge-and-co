@@ -94,6 +94,22 @@ const handleSignUp = async () => {
     return
   }
 
+  const user = data.user
+  if (user) {
+    const { error: insertError } = await supabase.from('users').insert([
+      {
+        id: user.id,
+        username: username.value,
+      },
+    ])
+
+    if (insertError) {
+      console.error('Error inserting into users table:', insertError.message)
+      error.value = 'User created but database entry failed.'
+      return
+    }
+  }
+
   dLoading.value = true
 }
 </script>
