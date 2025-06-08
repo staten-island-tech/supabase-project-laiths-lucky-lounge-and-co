@@ -46,19 +46,23 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { supabase } from '@/lib/supabase'
+import { useUserStore } from '@/stores/user'
 
+const username = userStore.user?.user_metadata?.username
 const deckId = ref('')
 const gameStarted = ref(false)
 const result = ref('')
 const turnResult = ref('')
 const choice = ref('')
-const bet = ref(0)
+const bet = ref(1)
 const currentWinnings = ref(0)
-const money = ref(500)
+const money = ref(0)
 const newCard = ref(null)
 const oldCard = ref(null)
 let cards = []
+const userStore = useUserStore()
 
 async function fetchNewDeck() {
   const res = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
@@ -163,6 +167,40 @@ function findMult() {
     return mult
   }
 }
+async function recordBet(netResult) {
+  const { error } = await supabase
+    .from('bets')
+    .insert([{ username, result: netResult, game: 'Blackjack' }])
+
+  if (error) {
+    console.error('Error recording bet:', error)
+  }
+}
+
+async function updateMoneyInSupabase() {
+  const userId = userStore.user?.id
+  if (!userId) return
+
+  await supabase.from('users').update({ money: money.value }).eq('id', userId)
+}
+
+watch(money, () => {
+  updateMoneyInSupabase()
+})
+
+async function loadMoney() {
+  const userId = userStore.user?.id
+  if (!userId) return
+
+  const { data, error } = await supabase.from('users').select('money').eq('id', userId).single()
+
+  if (data) {
+    money.value = data.money
+  }
+}
+onMounted(() => {
+  loadMoney()
+})
 </script>
 
 <style scoped></style>

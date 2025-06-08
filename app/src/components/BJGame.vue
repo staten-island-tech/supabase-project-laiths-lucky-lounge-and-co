@@ -1,29 +1,32 @@
 <template>
-  <div class="bg-green-900 min-h-screen py-10 px-4 text-white font-sans flex flex-col items-center space-y-10">
-    
+  <div
+    class="bg-green-900 min-h-screen py-10 px-4 text-white font-sans flex flex-col items-center space-y-10"
+  >
     <div class="text-center">
       <p class="text-3xl font-bold mb-2">💰 Money: ${{ money }}</p>
 
-      <div v-if="!gameStarted" class="bg-white/10 border border-white/20 rounded-xl p-6 mt-4 w-full max-w-md mx-auto shadow-md">
-  <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-    <input
-      type="number"
-      v-model.number="bet"
-      placeholder="Enter your bet"
-      :max="money"
-      :min="1"
-      @input="validateBet"
-      class="px-4 py-2 rounded-md text-black bg-white w-full sm:w-40 text-lg"
-    />
-    <button
-      @click="startGame"
-      class="px-5 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-md font-semibold text-lg"
-    >
-      Place Bet
-    </button>
-  </div>
-</div>
-
+      <div
+        v-if="!gameStarted"
+        class="bg-white/10 border border-white/20 rounded-xl p-6 mt-4 w-full max-w-md mx-auto shadow-md"
+      >
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <input
+            type="number"
+            v-model.number="bet"
+            placeholder="Enter your bet"
+            :max="money"
+            :min="1"
+            @input="validateBet"
+            class="px-4 py-2 rounded-md text-black bg-white w-full sm:w-40 text-lg"
+          />
+          <button
+            @click="startGame"
+            class="px-5 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-md font-semibold text-lg"
+          >
+            Place Bet
+          </button>
+        </div>
+      </div>
 
       <p v-else class="text-xl mt-4 font-medium">Current Bet: ${{ bet }}</p>
     </div>
@@ -57,7 +60,8 @@
       </button>
       <button
         @click="resetGame"
-        class="px-6 py-3 bg-gray-700 hover:bg-gray-800 rounded-lg font-semibold text-lg"
+        :disabled="!gameOver || gameStarted"
+        class="px-6 py-3 bg-gray-600 hover:bg-gray-700 rounded-lg font-semibold text-lg"
       >
         Reset
       </button>
@@ -69,11 +73,14 @@
   </div>
 </template>
 
-
-
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import CardHand from './BJCardHand.vue'
+import { supabase } from '@/lib/supabase'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+const username = userStore.user?.user_metadata?.username
 
 const deckId = ref('')
 const playerHand = ref([])
@@ -83,15 +90,15 @@ const dealerScore = ref(0)
 const gameOver = ref(false)
 const gameStarted = ref(false)
 const result = ref('')
-const bet = ref(0)
-const money = ref(500)
+const bet = ref(1)
+const money = ref(0)
 const showDealerHoleCard = ref(false)
 
 function validateBet() {
   if (bet.value > money.value) bet.value = money.value
   if (bet.value < 1) bet.value = 1
 }
- 
+
 async function fetchNewDeck() {
   const res = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
   const data = await res.json()
@@ -151,15 +158,18 @@ async function dealInitialCards() {
     money.value += bet.value
     gameOver.value = true
     showDealerHoleCard.value = true
+    recordBet(0)
   } else if (dealerScore.value === 21) {
     result.value = 'Dealer has blackjack. You lose.'
     gameOver.value = true
     showDealerHoleCard.value = true
+    recordBet(-1 * bet.value)
   } else if (playerScore.value === 21) {
     result.value = 'Blackjack! You win 1.5x your bet!'
     money.value += bet.value * 2.5
     gameOver.value = true
     showDealerHoleCard.value = true
+    recordBet(bet.value * 1.5)
   }
 }
 
@@ -171,6 +181,7 @@ async function hit() {
     result.value = 'You busted!'
     gameOver.value = true
     showDealerHoleCard.value = true
+    recordBet(-1 * bet.value)
   }
 }
 
@@ -186,14 +197,18 @@ async function stand() {
   if (dealerScore.value > 21) {
     result.value = 'Dealer busted! You win!'
     money.value += bet.value * 2
+    recordBet(bet.value)
   } else if (dealerScore.value > playerScore.value) {
     result.value = 'Dealer wins!'
+    recordBet(-1 * bet.value)
   } else if (dealerScore.value < playerScore.value) {
     result.value = 'You win!'
     money.value += bet.value * 2
+    recordBet(bet.value)
   } else {
     result.value = "It's a tie!"
     money.value += bet.value
+    recordBet(0)
   }
 
   gameOver.value = true
@@ -229,7 +244,40 @@ async function resetGame() {
   showDealerHoleCard.value = false
 }
 
+async function recordBet(netResult) {
+  const { error } = await supabase
+    .from('bets')
+    .insert([{ username, result: netResult, game: 'Blackjack' }])
+
+  if (error) {
+    console.error('Error recording bet:', error)
+  }
+}
+
+async function updateMoneyInSupabase() {
+  const userId = userStore.user?.id
+  if (!userId) return
+
+  await supabase.from('users').update({ money: money.value }).eq('id', userId)
+}
+
+watch(money, () => {
+  updateMoneyInSupabase()
+})
+
+async function loadMoney() {
+  const userId = userStore.user?.id
+  if (!userId) return
+
+  const { data, error } = await supabase.from('users').select('money').eq('id', userId).single()
+
+  if (data) {
+    money.value = data.money
+  }
+}
+
 onMounted(() => {
   fetchNewDeck()
+  loadMoney()
 })
 </script>

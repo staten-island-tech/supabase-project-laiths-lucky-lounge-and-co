@@ -5,7 +5,7 @@
     <h1
       class="absolute top-6 right-6 text-lg md:text-xl font-semibold bg-white text-indigo-700 px-4 py-2 rounded-xl shadow-md"
     >
-      Your Balance: ${{ balance }}
+      Your Balance: ${{ money }}
     </h1>
 
     <div class="bg-white text-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-md mt-12">
@@ -87,8 +87,10 @@
 import { ref } from 'vue'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user.js'
+import { supabase } from '@/lib/supabase'
+import { useUserStore } from '@/stores/user'
 
+const username = userStore.user?.user_metadata?.username
 const router = useRouter()
 const userStore = useUserStore()
 
@@ -101,16 +103,18 @@ onMounted(async () => {
 })
 
 let pChoice = ref('Choose a Coin!')
-const inputNumber = ref(0)
+const inputNumber = ref(1)
 const result = ref('')
-let balance = ref(100)
+let money = ref(0)
 const flipKey = ref(0)
 
 function updateBalance(amount, win) {
   if (win) {
-    balance.value += amount
+    money.value += amount
+    recordBet(bet.value)
   } else {
-    balance.value -= amount
+    money.value -= amount
+    recordBet(-1 * bet.value)
   }
 }
 
@@ -123,7 +127,7 @@ function winLoss(choice) {
 }
 
 function flipcoin() {
-  if (inputNumber.value > balance.value || inputNumber.value <= 0) {
+  if (inputNumber.value > money.value || inputNumber.value <= 0) {
     alert("You don't have enough money to bet that much!")
     return
   }
@@ -132,6 +136,41 @@ function flipcoin() {
   winLoss(pChoice.value)
   flipKey.value++
 }
+
+async function recordBet(netResult) {
+  const { error } = await supabase
+    .from('bets')
+    .insert([{ username, result: netResult, game: 'Blackjack' }])
+
+  if (error) {
+    console.error('Error recording bet:', error)
+  }
+}
+
+async function updateMoneyInSupabase() {
+  const userId = userStore.user?.id
+  if (!userId) return
+
+  await supabase.from('users').update({ money: money.value }).eq('id', userId)
+}
+
+watch(money, () => {
+  updateMoneyInSupabase()
+})
+
+async function loadMoney() {
+  const userId = userStore.user?.id
+  if (!userId) return
+
+  const { data, error } = await supabase.from('users').select('money').eq('id', userId).single()
+
+  if (data) {
+    money.value = data.money
+  }
+}
+onMounted(() => {
+  loadMoney()
+})
 </script>
 
 <style scoped>
