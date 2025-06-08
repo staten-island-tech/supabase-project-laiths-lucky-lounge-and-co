@@ -23,15 +23,24 @@ export const useUserStore = defineStore('user', () => {
     } = await supabase.auth.getSession()
 
     if (session?.user) {
-      login(session.user)
+      login({
+        id: session.user.id,
+        email: session.user.email,
+        username: session.user.user_metadata.username,
+      })
     } else {
       logout()
     }
   }
+
   const initAuthListener = () => {
     supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        login(session.user)
+        login({
+          id: session.user.id,
+          email: session.user.email,
+          username: session.user.user_metadata.username,
+        })
       } else {
         logout()
       }

@@ -54,15 +54,9 @@
         {{ isLoading ? 'Registering...' : 'Sign Up' }}
       </button>
       <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
-      <p v-if="dLoading">
-        An email was sent to your inbox, after confirming your email proceed to log in.
+      <p v-if="dLoading" class="text-green-600 text-sm">
+        An email was sent to your inbox. Please confirm your email before logging in.
       </p>
-      <RouterLink
-        to="/homepage"
-        class="absolute bottom-0 right-0 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition"
-      >
-        Enter Game Room
-      </RouterLink>
     </form>
   </div>
 </template>
@@ -99,6 +93,7 @@ const handleSignUp = async () => {
     error.value = signUpError.message
     return
   }
+
   dLoading.value = true
 }
 </script>
