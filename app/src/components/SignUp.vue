@@ -23,6 +23,16 @@
           />
         </label>
         <label class="block">
+          <span class="block text-sm font-bold mb-1">Username</span>
+          <input
+            v-model="username"
+            type="text"
+            placeholder="Username"
+            required
+            class="block w-full px-4 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </label>
+        <label class="block">
           <span class="block text-sm font-bold mb-1">Password</span>
           <input
             v-model="password"
@@ -62,6 +72,7 @@ import { ref } from 'vue'
 import { supabase } from '@/lib/supabase'
 
 const email = ref('')
+const username = ref('')
 const password = ref('')
 const isLoading = ref(false)
 const error = ref(null)
@@ -75,6 +86,11 @@ const handleSignUp = async () => {
   const { data, error: signUpError } = await supabase.auth.signUp({
     email: email.value,
     password: password.value,
+    options: {
+      data: {
+        username: username.value,
+      },
+    },
   })
 
   isLoading.value = false
