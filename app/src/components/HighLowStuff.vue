@@ -143,7 +143,7 @@ function checkResult() {
   const newC = numValue(newCard.value)
 
   turnResult.value = newC > oldC ? 'higher' : newC < oldC ? 'lower' : 'tie'
-  const mult = findMult(oldC, newC)
+  const mult = findMult(oldC, newC, turnResult.value)
 
   if (turnResult.value === choice.value) {
     result.value = 'You win!'
@@ -176,26 +176,28 @@ function numValue(card) {
   }
 }
 
-function findMult(oldVal, newVal) {
+function findMult(oldVal, newVal, turn) {
   let counter = 0
   let mult = 1
-  oldVal = numValue(oldCard.value)
-  newVal = numValue(newCard.value)
-  if (newVal > oldVal) {
-    while (newVal > oldVal) {
-      oldVal += 1
-      counter += 1
+
+  if (turn === 'higher') {
+    if (oldVal > 7) {
+      counter = newVal
+    } else {
+      counter = oldVal
     }
-  } else if (newVal < oldVal) {
-    while (newVal < oldVal) {
-      oldVal += 1
-      counter += 1
+  } else if (turn === 'lower') {
+    if (oldVal < 8) {
+      counter = 13 - newVal + 1
+    } else {
+      counter = 13 - oldVal + 1
     }
   }
 
   for (let i = 0; i < counter; i++) {
     mult *= 1.05
   }
+
   return mult
 }
 
