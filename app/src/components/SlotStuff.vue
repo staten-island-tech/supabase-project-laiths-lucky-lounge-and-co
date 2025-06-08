@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import 'animate.css'
 import cherry from '../assets/cherryslots.png'
 import lemon from '../assets/lemonslots.png'
@@ -61,7 +61,6 @@ import bar from '../assets/barslots.png'
 import seven from '../assets/sevenslots.png'
 import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/stores/user'
-import { watch } from 'vue'
 
 const userStore = useUserStore()
 const username = computed(() => userStore.user?.user_metadata?.username)
