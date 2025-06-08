@@ -60,7 +60,7 @@
       </button>
       <button
         @click="resetGame"
-        :disabled="!gameOver || gameStarted"
+        :disabled="!gameOver"
         class="px-6 py-3 bg-gray-600 hover:bg-gray-700 rounded-lg font-semibold text-lg"
       >
         Reset
@@ -241,7 +241,7 @@ async function resetGame() {
   result.value = ''
   gameOver.value = false
   gameStarted.value = false
-  bet.value = 0
+  bet.value = 1
   showDealerHoleCard.value = false
 }
 
