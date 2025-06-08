@@ -2,23 +2,55 @@
   <div>
     <HomeHeader />
 
-    <section class="p-4">
-      <h2 class="text-xl font-bold mb-2">🏆 Top 10 Highest Wins</h2>
-      <ul>
-        <li v-for="bet in topWins" :key="bet.id" class="py-1 border-b">
-          {{ bet.username }} – {{ bet.result }} – {{ bet.game }}
-        </li>
-      </ul>
-    </section>
+    <div class="max-w-3xl mx-auto mt-6 space-y-8">
+      <section class="bg-white rounded-2xl shadow-lg p-6">
+        <h2 class="text-2xl font-bold text-indigo-700 mb-4">🏆 Top 10 Highest Wins</h2>
+        <table class="w-full text-left">
+          <thead class="border-b border-gray-300">
+            <tr>
+              <th class="py-2 px-3">Username</th>
+              <th class="py-2 px-3">Result</th>
+              <th class="py-2 px-3">Game</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="bet in topWins"
+              :key="bet.id"
+              class="border-b last:border-none hover:bg-gray-50"
+            >
+              <td class="py-2 px-3 font-semibold">{{ bet.username }}</td>
+              <td class="py-2 px-3">${{ Number(bet.result).toFixed(2) }}</td>
+              <td class="py-2 px-3 text-gray-600">{{ bet.game }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-    <section class="p-4 mt-6">
-      <h2 class="text-xl font-bold mb-2">📅 10 Most Recent Bets</h2>
-      <ul>
-        <li v-for="bet in recentBets" :key="bet.id" class="py-1 border-b">
-          {{ bet.username }} – {{ bet.result }} – {{ bet.game }}
-        </li>
-      </ul>
-    </section>
+      <section class="bg-white rounded-2xl shadow-lg p-6">
+        <h2 class="text-2xl font-bold text-indigo-700 mb-4">📅 10 Most Recent Bets</h2>
+        <table class="w-full text-left">
+          <thead class="border-b border-gray-300">
+            <tr>
+              <th class="py-2 px-3">Username</th>
+              <th class="py-2 px-3">Result</th>
+              <th class="py-2 px-3">Game</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="bet in recentBets"
+              :key="bet.id"
+              class="border-b last:border-none hover:bg-gray-50"
+            >
+              <td class="py-2 px-3 font-semibold">{{ bet.username }}</td>
+              <td class="py-2 px-3">${{ Number(bet.result).toFixed(2) }}</td>
+              <td class="py-2 px-3 text-gray-600">{{ bet.game }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -31,13 +63,18 @@ import { supabase } from '@/lib/supabase'
 
 const router = useRouter()
 const userStore = useUserStore()
-onMounted(async () => {
-  await userStore.checkLoggedInStatus()
-  if (!userStore.isLoggedIn) router.push('/')
-})
 
 const topWins = ref([])
 const recentBets = ref([])
+
+onMounted(async () => {
+  await userStore.checkLoggedInStatus()
+  if (!userStore.isLoggedIn) {
+    router.push('/')
+    return
+  }
+  await fetchLeaderboards()
+})
 
 async function fetchLeaderboards() {
   const { data: wins, error: err1 } = await supabase
@@ -54,19 +91,11 @@ async function fetchLeaderboards() {
     .limit(10)
   if (!err2) recentBets.value = recent
 }
-
-onMounted(fetchLeaderboards)
 </script>
 
 <style scoped>
-h2 {
-  margin-bottom: 0.5rem;
-}
-ul {
-  list-style: none;
-  padding: 0;
-}
-li {
-  margin-bottom: 0.25rem;
+table th,
+table td {
+  padding-right: 1rem;
 }
 </style>
