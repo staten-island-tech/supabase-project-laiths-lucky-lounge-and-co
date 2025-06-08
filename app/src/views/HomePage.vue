@@ -1,11 +1,10 @@
 <template>
-  <div class="min-h-screen bg-gray-900 text-white p-6">
+  <div class="min-h-screen bg-gray-900 text-white">
     <HomeHeader />
 
-    <div class="mt-10 max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-      <!-- Top 10 Wins -->
+    <div class="mt-10 max-w-4xl mx-auto grid md:grid-cols-2 gap-8 p-6">
       <div class="bg-white/10 p-6 rounded-xl shadow-md">
-        <h2 class="text-2xl font-bold mb-4 text-yellow-400">Top 10 Highest Wins</h2>
+        <h2 class="text-2xl font-bold mb-4 text-yellow-400">🏆 Top 10 Highest Wins</h2>
         <table class="w-full text-left text-sm">
           <thead class="border-b border-white/20">
             <tr>
@@ -30,7 +29,7 @@
 
       <!-- Recent Bets -->
       <div class="bg-white/10 p-6 rounded-xl shadow-md">
-        <h2 class="text-2xl font-bold mb-4 text-blue-400">10 Most Recent Bets</h2>
+        <h2 class="text-2xl font-bold mb-4 text-blue-400">🕒 10 Most Recent Bets</h2>
         <table class="w-full text-left text-sm">
           <thead class="border-b border-white/20">
             <tr>
