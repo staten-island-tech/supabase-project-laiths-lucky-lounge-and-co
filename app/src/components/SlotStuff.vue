@@ -121,7 +121,7 @@ async function spinAnimate() {
 async function recordBet(netResult) {
   const { error } = await supabase
     .from('bets')
-    .insert([{ username: username.value, result: netResult, game: 'Coin Flip' }])
+    .insert([{ username: username.value, result: netResult, game: 'Slots' }])
 
   if (error) {
     console.error('Error recording bet:', error)
