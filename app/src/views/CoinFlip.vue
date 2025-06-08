@@ -154,12 +154,17 @@ async function updateMoneyInSupabase() {
 watch(money, () => {
   updateMoneyInSupabase()
 })
+console.log('userStore.user:', userStore.user)
 
 watch(
   () => userStore.user,
   (newUser) => {
+    console.log('watch fired — newUser:', newUser)
     if (newUser?.user_metadata?.username) {
       username.value = newUser.user_metadata.username
+      console.log('Username set to:', username.value)
+    } else {
+      console.warn('user_metadata.username missing')
     }
   },
   { immediate: true },
