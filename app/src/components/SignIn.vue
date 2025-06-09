@@ -4,7 +4,7 @@
       <form @submit.prevent="handleSignIn" class="space-y-4">
         <div class="space-y-2">
           <label class="block">
-            <span class="block text-sm font-bold mb-1">Email</span>
+            <span class="block text-sm font-bold mb-1 text-black">Email</span>
             <input
               v-model="email"
               type="email"
@@ -14,7 +14,7 @@
             />
           </label>
           <label class="block">
-            <span class="block text-sm font-bold mb-1">Password</span>
+            <span class="block text-sm font-bold mb-1 text-black">Password</span>
             <input
               v-model="password"
               type="password"

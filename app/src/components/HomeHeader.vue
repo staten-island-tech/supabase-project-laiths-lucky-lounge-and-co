@@ -1,12 +1,9 @@
 <template>
   <div class="bg-teal-500 h-[20vh] flex items-center justify-center relative">
-    <!-- Money Display (Top-Left) -->
     <div class="absolute top-3 left-3 text-white font-bold text-xl">💰 ${{ money }}</div>
 
-    <!-- Header Title -->
     <h1 class="text-[5vh] font-bold">Laith's Lucky Lounge <span class="text-xs">& co.</span></h1>
 
-    <!-- Game Menu -->
     <div class="dropdown dropdown-left absolute top-3 right-16">
       <button tabindex="0" class="btn btn-square">
         <Gamepad2 class="h-5 w-5 text-black" />
@@ -19,7 +16,6 @@
       </ul>
     </div>
 
-    <!-- Settings Menu -->
     <div class="dropdown dropdown-left absolute top-3 right-3">
       <button tabindex="0" class="btn btn-square">
         <Settings class="h-5 w-5 text-black" />
