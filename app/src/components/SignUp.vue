@@ -10,30 +10,30 @@
       @submit.prevent="handleSignUp"
       class="bg-white rounded-md shadow-md p-8 space-y-4 w-full max-w-md"
     >
-      <h2 class="text-2xl font-bold mb-4">Sign Up</h2>
-      <div class="space-y-2">
+      <h2 class="text-2xl font-bold mb-4 text-black">Sign Up</h2>
+      <div class="space-y-2 text-black">
         <label class="block">
-          <span class="block text-sm font-bold mb-1">Email</span>
+          <span class="block text-sm font-bold mb-1 text-black">Email</span>
           <input
             v-model="email"
             type="email"
             placeholder="Email"
             required
-            class="block w-full px-4 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+            class="block w-full px-4 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500 text-black"
           />
         </label>
         <label class="block">
-          <span class="block text-sm font-bold mb-1">Username</span>
+          <span class="block text-sm font-bold mb-1 text-black">Username</span>
           <input
             v-model="username"
             type="text"
             placeholder="Username"
             required
-            class="block w-full px-4 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+            class="block w-full px-4 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500 text-black"
           />
         </label>
         <label class="block">
-          <span class="block text-sm font-bold mb-1">Password</span>
+          <span class="block text-sm font-bold mb-1 text-black">Password</span>
           <input
             v-model="password"
             type="password"
@@ -42,7 +42,7 @@
             minlength="8"
             pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
             title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
-            class="block w-full px-4 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+            class="block w-full px-4 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500 text-black"
           />
         </label>
       </div>

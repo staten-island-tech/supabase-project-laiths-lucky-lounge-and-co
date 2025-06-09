@@ -3,7 +3,7 @@
     class="bg-green-900 min-h-screen py-10 px-4 text-white font-sans flex flex-col items-center space-y-10"
   >
     <div class="text-center">
-      <p class="text-3xl font-bold mb-2">Money: ${{ money }}</p>
+      <p class="text-3xl font-bold mb-2 text-black">Money: ${{ money }}</p>
 
       <div
         v-if="!gameStarted"
@@ -15,20 +15,19 @@
             v-model.number="bet"
             placeholder="Enter your bet"
             :max="money"
-            :min="1"
             @input="validateBet"
             class="px-4 py-2 rounded-md text-black bg-white w-full sm:w-40 text-lg"
           />
           <button
             @click="startGame"
-            class="px-5 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-md font-semibold text-lg"
+            class="px-5 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-md font-semibold text-lg text-black"
           >
             Place Bet
           </button>
         </div>
       </div>
 
-      <p v-else class="text-xl mt-4 font-medium">Current Bet: ${{ bet }}</p>
+      <p v-else class="text-xl mt-4 font-medium text-black">Current Bet: ${{ bet }}</p>
     </div>
 
     <div class="w-full max-w-4xl space-y-10">

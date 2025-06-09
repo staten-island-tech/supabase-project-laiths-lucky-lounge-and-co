@@ -2,7 +2,7 @@
   <div class="bg-teal-500 h-[20vh] flex items-center justify-center relative">
     <div class="absolute top-3 left-3 text-white font-bold text-xl">💰 ${{ money }}</div>
 
-    <h1 class="text-[5vh] font-bold">Laith's Lucky Lounge <span class="text-xs">& co.</span></h1>
+    <h1 class="text-[5vh] font-bold">Laith's Lucky Lounge <span class="text-xs">& Ryan</span></h1>
 
     <div class="dropdown dropdown-left absolute top-3 right-16">
       <button tabindex="0" class="btn btn-square">
