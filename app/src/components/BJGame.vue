@@ -19,10 +19,7 @@
             class="px-4 py-2 rounded-md text-black bg-white w-full sm:w-40 text-lg"
           />
           <button
-            @click="
-              validateBet()
-              startGame()
-            "
+            @click="(validateBet(), startGame())"
             class="px-5 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-md font-semibold text-lg text-black"
           >
             Place Bet
@@ -30,7 +27,7 @@
         </div>
       </div>
 
-      <p v-else class="text-xl mt-4 font-medium text-black">Current Bet: ${{ bet }}</p>
+      <p v-else class="text-xl mt-4 font-medium">Current Bet: ${{ bet }}</p>
     </div>
 
     <div class="w-full max-w-4xl space-y-10">
