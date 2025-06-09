@@ -110,14 +110,14 @@ async function spin() {
   let winnings = 0
   let message = 'You lose!'
   if (symbols.value[0] === symbols.value[1] && symbols.value[1] === symbols.value[2]) {
-    winnings = betAmount.value * 10
+    winnings = Math.round(betAmount.value * 10 * 100) / 100
     message = `Jackpot! You win $${winnings}!`
   } else if (
     symbols.value[0] === symbols.value[1] ||
     symbols.value[1] === symbols.value[2] ||
     symbols.value[0] === symbols.value[2]
   ) {
-    winnings = betAmount.value * 1.5
+    winnings = Math.round(betAmount.value * 1.5 * 100) / 100
     message = `You win $${winnings}!`
   }
   const netResult = winnings - betAmount.value
